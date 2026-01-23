@@ -1,8 +1,7 @@
 "use client"
 
 import React, { useState } from 'react';
-import Image from 'next/image'; // Si usas Next.js (T3 Stack)
-import Link from 'next/link';   // Si usas Next.js
+import Link from 'next/link';
 import { ShoppingCart } from 'lucide-react';
 
 

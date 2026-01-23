@@ -13,7 +13,7 @@ interface SuccessModalProps {
 
 export const SuccessModal: React.FC<SuccessModalProps> = ({
     isOpen,
-    orderId,
+    orderId: _orderId,
     onClose,
     onBackToPlans,
     onGoHome,

@@ -96,7 +96,7 @@ export const OrdersList: React.FC<OrdersListProps> = ({ orders, isLoading, onUpd
       const parsed = JSON.parse(accsString) as unknown;
       const ids = Array.isArray(parsed) ? (parsed as number[]) : [];
       return ids.map(id => getItemById(id)).filter((item): item is LegoItem => item !== null);
-    } catch (_e) {
+    } catch {
       return [];
     }
   };

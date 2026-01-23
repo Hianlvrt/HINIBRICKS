@@ -1,6 +1,6 @@
 "use client";
 import React from 'react';
-import { Check, Users, Sparkles } from 'lucide-react';
+import { Check, Users } from 'lucide-react';
 
 export type PlanType = 'standard' | 'familiar';
 

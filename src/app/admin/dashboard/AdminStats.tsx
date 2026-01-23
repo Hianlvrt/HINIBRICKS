@@ -1,6 +1,6 @@
 "use client";
 import React from 'react';
-import { DollarSign, Package, TrendingUp, Users, Star, ShoppingBag, Calendar, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { DollarSign, Package, TrendingUp, Star, ShoppingBag, Calendar, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { allLegoItems } from '~/data/Lego';
 
 interface Order {
@@ -101,7 +101,7 @@ export const AdminStats: React.FC<AdminStatsProps> = ({ orders, isLoading }) => 
         accs.forEach(accId => {
           itemCounts[accId] = (itemCounts[accId] ?? 0) + 1;
         });
-      } catch (_e) {}
+      } catch { /* ignore parse errors */ }
     });
   });
 
