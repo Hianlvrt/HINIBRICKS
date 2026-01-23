@@ -7,7 +7,7 @@ generator client {
 }
 
 datasource db {
-    provider = "sqlite"
+    provider = "postgresql"
     url      = env("DATABASE_URL")
 }
 
@@ -18,4 +18,46 @@ model Post {
     updatedAt DateTime @updatedAt
 
     @@index([name])
+}
+
+model LegoOrder {
+    id                     Int           @id @default(autoincrement())
+    planType               String        // 'standard' o 'familiar'
+    planName               String
+    planPrice              Int
+    totalPrice             Int
+    extraAccessoriesCount  Int           @default(0)
+    status                 String        @default("pending") // pending, confirmed, completed, cancelled
+    customerName           String
+    customerEmail          String
+    customerPhone          String
+    customerRut            String
+    customerRegion         String
+    customerComuna         String
+    customerAddress        String?
+    customerNote           String?
+    createdAt              DateTime      @default(now())
+    updatedAt              DateTime      @updatedAt
+    
+    figures                LegoFigure[]
+
+    @@index([status])
+    @@index([createdAt])
+    @@index([customerEmail])
+}
+
+model LegoFigure {
+    id          Int        @id @default(autoincrement())
+    orderId     Int
+    figureNumber Int       // 1, 2, 3, o 4
+    hairId      Int
+    faceId      Int
+    bodyId      Int
+    legsId      Int
+    accessories String     // JSON array de IDs de accesorios
+    createdAt   DateTime   @default(now())
+    
+    order       LegoOrder  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+    @@index([orderId])
 }
