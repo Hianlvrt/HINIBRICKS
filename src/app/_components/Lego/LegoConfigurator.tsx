@@ -1,11 +1,11 @@
 "use client";
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 // NUEVO: Importamos 'Check' y 'Lock' para el feedback visual
 import { Scissors, Smile, Shirt, ShoppingBag, Sparkles, User, Plus, Check, Lock, Mars, Venus } from 'lucide-react';
 import Image from 'next/image';
 
 import { LegoMannequin } from './LegoMannequin';
-import { getFilteredItems, type Sexo } from '~/data/Lego';
+import { getFilteredItems, type LegoItem } from '~/data/Lego';
 import type { Plan } from './PlanSelector';
 
 const CATEGORIES = [
@@ -66,15 +66,23 @@ export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initia
         fig4: { sexo: null, hair: null, face: null, body: null, legs: null, accs: [] },
     });
 
+    // Tipo para las claves de figuras
+    type FigureKey = 'fig1' | 'fig2' | 'fig3' | 'fig4';
+    
+    // Helper para obtener la clave de figura
+    const getFigureKey = useCallback((figNum: FigureNumber): FigureKey => {
+        return `fig${figNum}` as FigureKey;
+    }, []);
+
     // Helper para obtener el sexo de la figura activa
-    const getCurrentFigureSexo = () => {
-        const figKey = `fig${activeFigure}` as keyof typeof selections;
+    const getCurrentFigureSexo = useCallback(() => {
+        const figKey = getFigureKey(activeFigure);
         return selections[figKey].sexo;
-    };
+    }, [activeFigure, selections, getFigureKey]);
 
     // Handler para cambiar el sexo de la figura activa
     const handleSexoChange = (sexo: 'male' | 'female') => {
-        const figKey = `fig${activeFigure}` as keyof typeof selections;
+        const figKey = getFigureKey(activeFigure);
         const currentSexo = selections[figKey].sexo;
         
         // Si cambia el sexo, resetear las selecciones de pelo y rostro (ya que son específicas por sexo)
@@ -97,7 +105,7 @@ export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initia
         const maxFigures = plan.maxFigures;
         
         for (let i = 1; i <= maxFigures; i++) {
-            const figKey = `fig${i}` as keyof typeof selections;
+            const figKey = getFigureKey(i as FigureNumber);
             const accsCount = selections[figKey].accs.length;
             // Si tiene más de los incluidos en el plan, contamos los extra
             if (accsCount > plan.maxAccsPerFigure) {
@@ -116,7 +124,7 @@ export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initia
 
     // Helper para saber si una categoría específica ya tiene selección
     const isCategoryCompleted = (catId: string) => {
-        const figKey = `fig${activeFigure}` as keyof typeof selections;
+        const figKey = getFigureKey(activeFigure);
         const value = selections[figKey][catId as keyof FigureSelection];
         // Para accesorios, verificamos si el array tiene al menos un elemento
         if (catId === 'accs') {
@@ -129,7 +137,7 @@ export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initia
     // Helper para verificar si la figura COMPLETA está lista (por número de figura)
     const isFigureComplete = (figureNum?: FigureNumber) => {
         const figNum = figureNum ?? activeFigure;
-        const figKey = `fig${figNum}` as keyof typeof selections;
+        const figKey = getFigureKey(figNum);
         const currentSelections = selections[figKey];
         // Revisamos si TODAS las categorías tienen valor (incluyendo sexo)
         // Para accesorios, verificamos que el array tenga al menos un elemento
@@ -175,10 +183,10 @@ export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initia
         const figureSexo = getCurrentFigureSexo();
         if (!figureSexo) return []; // Si no hay sexo seleccionado, no mostrar opciones
         return getFilteredItems(activeCategory, figureSexo);
-    }, [activeCategory, selections, activeFigure]);
+    }, [activeCategory, getCurrentFigureSexo]);
 
-    const handleSelect = (item: any) => {
-        const figKey = `fig${activeFigure}` as keyof typeof selections;
+    const handleSelect = (item: LegoItem) => {
+        const figKey = getFigureKey(activeFigure);
         
         // Lógica especial para accesorios (múltiples selecciones)
         if (activeCategory === 'accs') {
@@ -225,7 +233,7 @@ export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initia
     };
 
     const isSelected = (itemId: number) => {
-        const figKey = `fig${activeFigure}` as keyof typeof selections;
+        const figKey = getFigureKey(activeFigure);
         
         // Para accesorios, verificamos si está en el array
         if (activeCategory === 'accs') {
@@ -239,7 +247,7 @@ export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initia
     // Helper para verificar si se puede seleccionar más accesorios
     const canSelectMoreAccs = () => {
         if (activeCategory !== 'accs') return true;
-        const figKey = `fig${activeFigure}` as keyof typeof selections;
+        const figKey = getFigureKey(activeFigure);
         return selections[figKey].accs.length < 2;
     };
 
@@ -309,7 +317,7 @@ export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initia
                                          figNum === 2 ? isFig2Complete() : 
                                          figNum === 3 ? isFig3Complete() : 
                                          isFig4Complete();
-                        const figKey = `fig${figNum}` as keyof typeof selections;
+                        const figKey = getFigureKey(figNum as FigureNumber);
                         const figureSexo = selections[figKey].sexo;
                         
                         // Color dinámico basado en el sexo seleccionado
@@ -423,28 +431,23 @@ export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initia
                             Selecciona {CATEGORIES.find(c => c.id === activeCategory)?.label}
                         </h3>
                         {/* Contador de accesorios seleccionados */}
-                        {activeCategory === 'accs' && (
-                            <div className="flex flex-col items-end">
-                                <span className="text-sm text-gray-500 font-semibold">
-                                    {(() => {
-                                        const figKey = `fig${activeFigure}` as keyof typeof selections;
-                                        const count = selections[figKey].accs.length;
-                                        const extraCount = Math.max(0, count - plan.maxAccsPerFigure);
-                                        return `${count}/2 seleccionados`;
-                                    })()}
-                                </span>
-                                {(() => {
-                                    const figKey = `fig${activeFigure}` as keyof typeof selections;
-                                    const count = selections[figKey].accs.length;
-                                    const extraCount = Math.max(0, count - plan.maxAccsPerFigure);
-                                    return extraCount > 0 && (
+                        {activeCategory === 'accs' && (() => {
+                            const figKey = getFigureKey(activeFigure);
+                            const count = selections[figKey].accs.length;
+                            const extraCount = Math.max(0, count - plan.maxAccsPerFigure);
+                            return (
+                                <div className="flex flex-col items-end">
+                                    <span className="text-sm text-gray-500 font-semibold">
+                                        {count}/2 seleccionados
+                                    </span>
+                                    {extraCount > 0 && (
                                         <span className="text-xs text-orange-600 font-semibold">
                                             +${(extraCount * plan.accExtraCost).toLocaleString()} extra
                                         </span>
-                                    );
-                                })()}
-                            </div>
-                        )}
+                                    )}
+                                </div>
+                            );
+                        })()}
                     </div>
 
                     {!getCurrentFigureSexo() ? (
