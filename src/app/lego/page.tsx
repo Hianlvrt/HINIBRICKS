@@ -92,9 +92,9 @@ export default function LegoPage() {
     const loadingToast = toast.loading('Procesando tu pedido...', {
       description: 'Estamos guardando tu configuración',
       classNames: {
-        toast: 'text-black',
-        title: 'text-black font-bold',
-        description: 'text-dark',
+        toast: 'bg-white',
+        title: '!text-gray-900 font-bold',
+        description: '!text-gray-600',
       },
     })
 
@@ -115,9 +115,9 @@ export default function LegoPage() {
             description: `Tu pedido #${result.id} ha sido registrado exitosamente`,
             duration: 5000,
             classNames: {
-              toast: 'text-black',
-              title: 'text-black font-bold',
-              description: 'text-dark',
+              toast: 'bg-white',
+              title: '!text-gray-900 font-bold',
+              description: '!text-gray-600',
             },
           })
 
@@ -132,9 +132,9 @@ export default function LegoPage() {
             description: error.message || 'No pudimos procesar tu pedido. Intenta nuevamente.',
             duration: 5000,
             classNames: {
-              toast: 'text-black',
-              title: 'text-black font-bold',
-              description: 'text-dark',
+              toast: 'bg-white',
+              title: '!text-gray-900 font-bold',
+              description: '!text-gray-600',
             },
           })
           console.error('Error al guardar el pedido:', error)

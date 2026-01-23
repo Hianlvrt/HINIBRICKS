@@ -14,7 +14,7 @@ export const Footer = () => {
                     <a href="https://twitter.com/hini_bricks" className="text-gray-500 ml-1" target="_blank" rel="noopener noreferrer">@hini_bricks</a>
                 </p>
                 <span className="inline-flex sm:ml-auto sm:mt-0 mt-4 justify-center sm:justify-start">
-                    <a href="https://www.instagram.com/hini_bricks/" className="ml-3 text-gray-400" target="_blank" rel="noopener noreferrer">
+                    <a href="https://www.instagram.com/hinibricks/" className="ml-3 text-gray-400" target="_blank" rel="noopener noreferrer">
                         <Instagram />
                     </a>
                 </span>

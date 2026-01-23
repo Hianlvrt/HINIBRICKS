@@ -10,13 +10,8 @@ export default function AdminLogin() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    // NOTA: Para producción real, esto debería ser una Server Action o API Route.
-    // Para este ejemplo práctico, validamos contra una clave hardcodeada o env pública
-    // Lo ideal es validarlo en el servidor.
     
-    // Simulación simple:
-    if (password === "admin123") { // Cambia esto por tu contraseña deseada
-      // Guardamos una "sesión" simple en localStorage
+    if (password === "admin123") {
       localStorage.setItem('isAdmin', 'true');
       document.cookie = "isAdmin=true; path=/";
       router.push('/admin/dashboard');

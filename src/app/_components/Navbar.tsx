@@ -29,19 +29,6 @@ export const Navbar = () => {
 
         {/* --- 2. BOTONES DERECHA (Móvil y Desktop) --- */}
         <div className="flex items-center gap-x-2 sm:order-3">
-            
-            {/* Icono Carrito de Compras (Siempre visible) */}
-            <button className="text-white hover:text-yellow-300 transition p-2">
-                <ShoppingCart />
-            </button>
-
-            {/* Botón CTA Principal (Hidden en móvil muy pequeño si quieres) */}
-            <Link 
-                href="/lego"
-                className="hidden sm:inline-flex items-center gap-x-2 rounded-full border border-transparent bg-yellow-400 px-4 py-2 text-sm font-bold text-blue-900 shadow-sm hover:bg-yellow-300 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none transition-all transform hover:scale-105"
-            >
-                ¡Armar Lego!
-            </Link>
 
             {/* Botón Menú Hamburguesa (Móvil) */}
             <button 

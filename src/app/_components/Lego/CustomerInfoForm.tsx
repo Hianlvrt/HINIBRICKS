@@ -2,13 +2,6 @@
 import React, { useState, useMemo } from 'react';
 import { ChevronLeft, User, Mail, Phone, MapPin, ArrowRight, CreditCard, NotebookPen } from 'lucide-react';
 import { comunasRegiones } from '~/data/comunasRegiones';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
 
 export interface CustomerInfo {
     name: string;
@@ -41,11 +34,16 @@ export const CustomerInfoForm: React.FC<CustomerInfoFormProps> = ({ initialData,
 
     const [errors, setErrors] = useState<Partial<CustomerInfo>>({});
 
-    // Filtrar comunas según la región seleccionada
+    // Regiones ordenadas alfabéticamente
+    const sortedRegiones = useMemo(() => {
+        return [...comunasRegiones].sort((a, b) => a.region.localeCompare(b.region, 'es'));
+    }, []);
+
+    // Filtrar comunas según la región seleccionada y ordenar alfabéticamente
     const availableComunas = useMemo(() => {
         if (!formData.region) return [];
         const regionData = comunasRegiones.find(r => r.region === formData.region);
-        return regionData ? regionData.comunas : [];
+        return regionData ? [...regionData.comunas].sort((a, b) => a.localeCompare(b, 'es')) : [];
     }, [formData.region]);
 
     // Validar RUT chileno
@@ -118,6 +116,10 @@ export const CustomerInfoForm: React.FC<CustomerInfoFormProps> = ({ initialData,
         // Validar comuna
         if (!formData.comuna) {
             newErrors.comuna = 'La comuna es requerida';
+        }
+        // Validar dirección
+        if (!formData.address?.trim()) {
+            newErrors.address = 'La dirección es requerida';
         }
 
         setErrors(newErrors);
@@ -268,29 +270,24 @@ export const CustomerInfoForm: React.FC<CustomerInfoFormProps> = ({ initialData,
                         <MapPin size={18} className="text-blue-500" />
                         Región <span className="text-red-500">*</span>
                     </label>
-                    <Select
+                    <select
+                        id="region"
                         value={formData.region}
-                        onValueChange={(value) => handleChange('region', value)}
-                    >
-                        <SelectTrigger className={`h-12 rounded-xl border-2 bg-white shadow-sm ${
+                        onChange={(e) => handleChange('region', e.target.value)}
+                        className={`w-full h-12 px-4 rounded-xl border-2 bg-white shadow-sm outline-none transition-colors appearance-none cursor-pointer ${
                             errors.region 
-                                ? 'border-red-300' 
-                                : 'border-gray-200'
-                        }`}>
-                            <SelectValue placeholder="Selecciona una región" />
-                        </SelectTrigger>
-                        <SelectContent className="max-h-[280px] bg-white shadow-xl border-2 border-gray-200 overflow-y-auto">
-                            {comunasRegiones.map((item) => (
-                                <SelectItem 
-                                    key={item.region} 
-                                    value={item.region}
-                                    className="cursor-pointer hover:bg-blue-50"
-                                >
-                                    {item.region}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
+                                ? 'border-red-300 focus:border-red-500' 
+                                : 'border-gray-200 focus:border-blue-500'
+                        }`}
+                        style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center', backgroundSize: '20px' }}
+                    >
+                        <option value="">Selecciona una región</option>
+                        {sortedRegiones.map((item) => (
+                            <option key={item.region} value={item.region}>
+                                {item.region}
+                            </option>
+                        ))}
+                    </select>
                     {errors.region && (
                         <p className="text-red-500 text-sm mt-1">{errors.region}</p>
                     )}
@@ -302,30 +299,25 @@ export const CustomerInfoForm: React.FC<CustomerInfoFormProps> = ({ initialData,
                         <MapPin size={18} className="text-blue-500" />
                         Comuna <span className="text-red-500">*</span>
                     </label>
-                    <Select
+                    <select
+                        id="comuna"
                         value={formData.comuna}
-                        onValueChange={(value) => handleChange('comuna', value)}
+                        onChange={(e) => handleChange('comuna', e.target.value)}
                         disabled={!formData.region}
-                    >
-                        <SelectTrigger className={`h-12 rounded-xl border-2 bg-white shadow-sm ${
+                        className={`w-full h-12 px-4 rounded-xl border-2 bg-white shadow-sm outline-none transition-colors appearance-none cursor-pointer ${
                             errors.comuna 
-                                ? 'border-red-300' 
-                                : 'border-gray-200'
-                        } ${!formData.region ? 'opacity-50 cursor-not-allowed bg-gray-50' : ''}`}>
-                            <SelectValue placeholder={formData.region ? "Selecciona una comuna" : "Primero selecciona una región"} />
-                        </SelectTrigger>
-                        <SelectContent className="max-h-[280px] bg-white shadow-xl border-2 border-gray-200 overflow-y-auto">
-                            {availableComunas.map((comuna) => (
-                                <SelectItem 
-                                    key={comuna} 
-                                    value={comuna}
-                                    className="cursor-pointer hover:bg-blue-50"
-                                >
-                                    {comuna}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
+                                ? 'border-red-300 focus:border-red-500' 
+                                : 'border-gray-200 focus:border-blue-500'
+                        } ${!formData.region ? 'opacity-50 cursor-not-allowed bg-gray-50' : ''}`}
+                        style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center', backgroundSize: '20px' }}
+                    >
+                        <option value="">{formData.region ? "Selecciona una comuna" : "Primero selecciona una región"}</option>
+                        {availableComunas.map((comuna) => (
+                            <option key={comuna} value={comuna}>
+                                {comuna}
+                            </option>
+                        ))}
+                    </select>
                     {errors.comuna && (
                         <p className="text-red-500 text-sm mt-1">{errors.comuna}</p>
                     )}
@@ -340,16 +332,20 @@ export const CustomerInfoForm: React.FC<CustomerInfoFormProps> = ({ initialData,
                 <div className="mb-8">
                     <label htmlFor="address" className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-2">
                         <MapPin size={18} className="text-blue-500" />
-                        Dirección <span className="text-gray-400 text-xs">(Opcional)</span>
+                        Dirección <span className="text-red-500">*</span>
                     </label>
                     <textarea
                         id="address"
                         value={formData.address}
                         onChange={(e) => handleChange('address', e.target.value)}
                         rows={3}
+                        required
                         className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 outline-none transition-colors resize-none"
                         placeholder="Calle, número, comuna, ciudad"
                     />
+                    {errors.address && (
+                        <p className="text-red-500 text-sm mt-1">{errors.address}</p>
+                    )}
                     <p className="text-xs text-gray-500 mt-1">
                         Puedes agregar tu dirección para facilitar el envío
                     </p>
@@ -393,7 +389,7 @@ export const CustomerInfoForm: React.FC<CustomerInfoFormProps> = ({ initialData,
                         type="submit"
                         className="flex-1 py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold transition-colors shadow-lg flex items-center justify-center gap-2"
                     >
-                        Continuar al Resumen
+                        Continuar
                         <ArrowRight size={20} />
                     </button>
                 </div>

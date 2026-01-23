@@ -337,18 +337,18 @@ export const OrderSummary: React.FC<OrderSummaryProps> = ({
                 </div>
 
                 {/* Botones de acción */}
-                <div className="flex gap-4">
+                <div className="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4">
                     <button
                         onClick={onBack}
-                        className="flex-1 py-4 rounded-2xl border-2 border-gray-300 text-gray-700 font-bold hover:bg-gray-50 transition-colors"
+                        className="flex-1 py-3 sm:py-4 rounded-xl sm:rounded-2xl border-2 border-gray-300 text-gray-700 font-bold hover:bg-gray-50 transition-colors text-sm sm:text-base"
                     >
                         Volver a editar
                     </button>
                     <button
                         onClick={onConfirm}
-                        className="flex-1 py-4 rounded-2xl bg-green-600 hover:bg-green-700 text-white font-bold transition-colors shadow-lg flex items-center justify-center gap-2"
+                        className="flex-1 py-3 sm:py-4 rounded-xl sm:rounded-2xl bg-green-600 hover:bg-green-700 text-white font-bold transition-colors shadow-lg flex items-center justify-center gap-2 text-sm sm:text-base"
                     >
-                        <ShoppingCart size={20} />
+                        <ShoppingCart size={18} className="sm:w-5 sm:h-5" />
                         Confirmar Pedido
                     </button>
                 </div>
