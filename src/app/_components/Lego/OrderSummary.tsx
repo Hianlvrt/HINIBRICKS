@@ -315,12 +315,19 @@ export const OrderSummary: React.FC<OrderSummaryProps> = ({
                         <span className="font-bold text-gray-900">{configuredFigures.length}</span>
                     </div>
                     
+                    {plan.id === 'familiar' && configuredFigures.some(f => f.number === 4) && (
+                        <div className="flex justify-between items-center">
+                            <span className="text-gray-600">Figura 4 adicional</span>
+                            <span className="font-bold text-green-600">+$3.000</span>
+                        </div>
+                    )}
+                    
                     {extraAccessoriesCount > 0 && (
                         <div className="flex justify-between items-center">
                             <span className="text-gray-600">
                                 Accesorios extra ({extraAccessoriesCount})
                             </span>
-                            <span className="font-bold text-orange-600">
+                            <span className="font-bold text-green-600">
                                 +${(extraAccessoriesCount * plan.accExtraCost).toLocaleString()}
                             </span>
                         </div>

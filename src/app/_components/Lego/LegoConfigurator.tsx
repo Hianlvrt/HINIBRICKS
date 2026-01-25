@@ -116,12 +116,6 @@ export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initia
         return extraCount;
     }, [plan.maxFigures, plan.maxAccsPerFigure, selections, getFigureKey]);
 
-    // Calcular precio total
-    const totalPrice = useMemo(() => {
-        const extraAccs = calculateExtraAccessories();
-        return plan.price + (extraAccs * plan.accExtraCost);
-    }, [plan.price, plan.accExtraCost, calculateExtraAccessories]);
-
     // Helper para saber si una categoría específica ya tiene selección
     const isCategoryCompleted = (catId: string) => {
         const figKey = getFigureKey(activeFigure);
@@ -135,7 +129,7 @@ export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initia
     };
 
     // Helper para verificar si la figura COMPLETA está lista (por número de figura)
-    const isFigureComplete = (figureNum?: FigureNumber) => {
+    const isFigureComplete = useCallback((figureNum?: FigureNumber) => {
         const figNum = figureNum ?? activeFigure;
         const figKey = getFigureKey(figNum);
         const currentSelections = selections[figKey];
@@ -149,7 +143,23 @@ export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initia
             currentSelections.legs !== null &&
             currentSelections.accs.length > 0 // Al menos un accesorio
         );
-    };
+    }, [activeFigure, selections, getFigureKey]);
+
+    // Costo extra por figura adicional (figura 4 en plan familiar)
+    const EXTRA_FIGURE_COST = 3000;
+
+    // Calcular precio total
+    const totalPrice = useMemo(() => {
+        const extraAccs = calculateExtraAccessories();
+        let price = plan.price + (extraAccs * plan.accExtraCost);
+        
+        // Si es plan familiar y la figura 4 está completa, agregar $3.000
+        if (plan.id === 'familiar' && isFigureComplete(4)) {
+            price += EXTRA_FIGURE_COST;
+        }
+        
+        return price;
+    }, [plan.price, plan.accExtraCost, plan.id, calculateExtraAccessories, isFigureComplete]);
 
     // Helpers específicos para cada figura
     const isFig1Complete = () => isFigureComplete(1);
@@ -157,14 +167,28 @@ export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initia
     const isFig3Complete = () => isFigureComplete(3);
     const isFig4Complete = () => isFigureComplete(4);
 
-    // Verificar si TODAS las figuras del plan están completas
+    // Verificar si se puede avanzar (figuras mínimas completas)
+    // Plan familiar: mínimo 2 figuras (Fig. 1 y Fig. 2), las demás son opcionales
+    // Plan estándar: todas las figuras deben estar completas
     const areAllFiguresComplete = () => {
+        if (plan.id === 'familiar') {
+            // Para plan familiar, solo necesitamos 2 figuras completas (Fig. 1 y Fig. 2)
+            return isFigureComplete(1) && isFigureComplete(2);
+        }
+        
+        // Para otros planes, todas las figuras deben estar completas
         for (let i = 1; i <= plan.maxFigures; i++) {
             if (!isFigureComplete(i as FigureNumber)) {
                 return false;
             }
         }
         return true;
+    };
+
+    // Obtener el mínimo de figuras requeridas según el plan
+    const getMinRequiredFigures = () => {
+        if (plan.id === 'familiar') return 2;
+        return plan.maxFigures;
     };
 
     // Contar cuántas figuras están completas
@@ -264,7 +288,7 @@ export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initia
     };
 
     return (
-        <div className="flex flex-col lg:flex-row gap-4 lg:gap-8 w-full max-w-340 mx-auto p-2 sm:p-4 lg:p-8 min-h-[600px]">
+        <div className="flex flex-col lg:flex-row gap-5 lg:gap-8 w-full max-w-340 mx-auto p-3 sm:p-4 lg:p-8 min-h-[600px]">
 
             {/* === COLUMNA IZQUIERDA: PREVIEW === */}
             <div className="w-full lg:w-1/3 flex flex-col gap-3 lg:gap-4">
@@ -286,7 +310,7 @@ export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initia
                     <div className="grid grid-cols-1 gap-4">
                         <button className="flex flex-col items-center justify-center gap-2 p-4 rounded-2xl border-2 border-dashed border-blue-200 bg-white hover:bg-blue-50 transition-colors text-blue-500">
                             <Plus size={24} />
-                            <span className="text-sm font-bold">Agregar Extra</span>
+                            <span className="text-sm font-bold">Agregar Mascota</span>
                         </button>
                     </div>
                 )}
@@ -298,17 +322,25 @@ export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initia
                         <p className="text-2xl sm:text-3xl font-black text-blue-600">
                             ${totalPrice.toLocaleString()}
                         </p>
-                        {calculateExtraAccessories() > 0 && (
-                            <p className="text-xs text-gray-500 mt-2">
-                                Incluye {calculateExtraAccessories()} accesorio(s) extra
-                            </p>
-                        )}
+                        {/* Mostrar desglose de costos extra */}
+                        <div className="flex flex-col gap-0.5 mt-2">
+                            {plan.id === 'familiar' && isFigureComplete(4) && (
+                                <p className="text-xs text-green-600 font-semibold">
+                                    +$3.000 por figura adicional (Fig. 4)
+                                </p>
+                            )}
+                            {calculateExtraAccessories() > 0 && (
+                                <p className="text-xs text-gray-500">
+                                    +${(calculateExtraAccessories() * plan.accExtraCost).toLocaleString()} ({calculateExtraAccessories()} accesorio(s) extra)
+                                </p>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
 
             {/* === COLUMNA DERECHA: CONTROLES === */}
-            <div className="w-full lg:w-2/3 flex flex-col gap-3 lg:gap-6">
+            <div className="w-full lg:w-2/3 flex flex-col gap-4 lg:gap-6">
 
                 {/* Selector de Figuras (dinámico según el plan) */}
                 <div className="flex gap-2 lg:gap-3 p-1 bg-gray-100/50 rounded-xl lg:rounded-2xl w-fit mx-auto lg:mx-0 flex-wrap">
@@ -424,7 +456,7 @@ export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initia
                 </div>
 
                 {/* GRILLA DE OPCIONES */}
-                <div className="bg-white rounded-2xl lg:rounded-[2rem] p-3 sm:p-4 lg:p-6 shadow-xl border border-gray-100 grow relative min-h-[300px] sm:min-h-[350px] lg:min-h-[400px]">
+                <div className="bg-white rounded-2xl lg:rounded-[2rem] p-4 sm:p-5 lg:p-6 shadow-xl border border-gray-100 grow relative min-h-[320px] sm:min-h-[350px] lg:min-h-[400px]">
 
                     <div className="flex items-center justify-between mb-3 lg:mb-4">
                         <h3 className="text-gray-800 font-bold flex items-center gap-2 text-sm lg:text-base">
@@ -457,7 +489,7 @@ export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initia
                             <p className="text-xs lg:text-sm mt-1">Elige si la figura será Hombre o Mujer</p>
                         </div>
                     ) : currentOptions.length > 0 ? (
-                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2.5 sm:gap-3 lg:gap-4 overflow-y-auto max-h-[250px] sm:max-h-[300px] lg:max-h-[400px] pr-1 lg:pr-2 custom-scrollbar pb-16 sm:pb-20">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-4 lg:gap-4 overflow-y-auto max-h-[300px] sm:max-h-[350px] lg:max-h-[400px] pr-1 lg:pr-2 custom-scrollbar pb-16 sm:pb-20">
                             {currentOptions.map((item) => {
                                 const selected = isSelected(item.id);
                                 const isDisabled = activeCategory === 'accs' && !selected && !canSelectMoreAccs();
@@ -528,7 +560,7 @@ export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initia
                             ) : (
                                 <>
                                     <Lock size={14} className="lg:w-4 lg:h-4" /> {/* Icono de candado */}
-                                    {getCompletedFiguresCount()}/{plan.maxFigures} figuras
+                                    {getCompletedFiguresCount()}/{getMinRequiredFigures()} figuras
                                 </>
                             )}
                         </button>

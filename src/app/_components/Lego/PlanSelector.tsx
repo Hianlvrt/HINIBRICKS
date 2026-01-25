@@ -29,10 +29,11 @@ const PLANS: Plan[] = [
         maxAccsPerFigure: 1,
         accExtraCost: 1000,
         features: [
-            'Máximo 2 Figuras',
+            'Incluye 2 Figuras',
             'Incluye 2 Accesorios',
             'Fondo Personalizado',
-            'Accesorios extra: +$1.000 c/u'
+            'Accesorios extra: +$1.000 c/u',
+            'Permite agregar mascota: +$1.500 c/u'
         ],
         popular: true,
     },
@@ -46,10 +47,10 @@ const PLANS: Plan[] = [
         maxAccsPerFigure: 1,
         accExtraCost: 1000,
         features: [
-            'Máximo 4 Figuras',
+            'Incluye 3 Figuras',
             'Ideal para familias',
             'Más espacio para detalles',
-            'Permite añadir extras',
+            'Permite añadir figuras adicionales: +$3.000 c/u',
             'Accesorios extra: +$1.000 c/u'
         ],
         allowsExtra: true,
