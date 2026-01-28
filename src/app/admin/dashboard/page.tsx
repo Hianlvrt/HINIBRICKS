@@ -2,12 +2,13 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { api } from '~/trpc/react';
-import { BarChart3, Package, LogOut } from 'lucide-react';
+import { BarChart3, Package, LogOut, Boxes } from 'lucide-react';
 import { Button } from '~/components/ui/button';
 import { AdminStats } from './AdminStats';
 import { OrdersList } from './OrdersList';
+import { InventoryList } from './InventoryList';
 
-type TabType = 'dashboard' | 'orders';
+type TabType = 'dashboard' | 'orders' | 'inventory';
 type OrderStatus = 'pending' | 'processing' | 'completed' | 'cancelled';
 
 export default function AdminDashboard() {
@@ -86,6 +87,17 @@ export default function AdminDashboard() {
               <BarChart3 size={18} />
               Dashboard
             </button>
+            <button
+              onClick={() => setActiveTab('inventory')}
+              className={`flex items-center gap-2 px-4 py-3 text-sm font-semibold rounded-t-lg transition-all ${
+                activeTab === 'inventory'
+                  ? 'bg-gray-50 text-blue-600 border-t-2 border-x-2 border-blue-600'
+                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+              }`}
+            >
+              <Boxes size={18} />
+              Inventario
+            </button>
           </div>
         </div>
       </header>
@@ -98,6 +110,8 @@ export default function AdminDashboard() {
             isLoading={isLoading} 
             onUpdateStatus={handleUpdateStatus} 
           />
+        ) : activeTab === 'inventory' ? (
+          <InventoryList />
         ) : (
           <AdminStats orders={orders} isLoading={isLoading} />
         )}

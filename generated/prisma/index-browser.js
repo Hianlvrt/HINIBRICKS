@@ -135,7 +135,10 @@ exports.Prisma.LegoOrderScalarFieldEnum = {
   planPrice: 'planPrice',
   totalPrice: 'totalPrice',
   extraAccessoriesCount: 'extraAccessoriesCount',
+  petId: 'petId',
   status: 'status',
+  backgroundId: 'backgroundId',
+  customBackgroundUrl: 'customBackgroundUrl',
   customerName: 'customerName',
   customerEmail: 'customerEmail',
   customerPhone: 'customerPhone',
@@ -160,6 +163,12 @@ exports.Prisma.LegoFigureScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.DisabledProductScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  itemId: 'itemId'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -179,7 +188,8 @@ exports.Prisma.NullsOrder = {
 exports.Prisma.ModelName = {
   Post: 'Post',
   LegoOrder: 'LegoOrder',
-  LegoFigure: 'LegoFigure'
+  LegoFigure: 'LegoFigure',
+  DisabledProduct: 'DisabledProduct'
 };
 
 /**

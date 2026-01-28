@@ -1,8 +1,11 @@
 "use client";
 import React, { useState, useMemo, useEffect } from 'react';
-import { Search, Package, Calendar, Phone, MapPin, ChevronDown, ChevronUp, CheckCircle, Clock, XCircle, User, ChevronLeft, ChevronRight, Filter, X, ZoomIn } from 'lucide-react';
+import { Search, Package, Calendar, Phone, MapPin, ChevronDown, ChevronUp, CheckCircle, Clock, XCircle, User, ChevronLeft, ChevronRight, Filter, X, ZoomIn, PawPrint, Download } from 'lucide-react';
 import Image from 'next/image';
 import { allLegoItems, type LegoItem } from '~/data/Lego';
+import { Fondos } from '~/data/Lego/fondos';
+import { pets } from '~/data/Lego/pets';
+import { CUSTOM_BACKGROUND_ID } from '~/lib/cloudinary';
 import { Button } from '~/components/ui/button';
 import { Badge } from '~/components/ui/badge';
 import {
@@ -21,6 +24,9 @@ const ITEMS_PER_PAGE = 10;
 interface Order {
   id: number;
   totalPrice: number;
+  backgroundId: number;
+  customBackgroundUrl?: string | null;
+  petId?: number | null;
   status: string;
   createdAt: Date;
   customerName: string;
@@ -209,7 +215,7 @@ export const OrdersList: React.FC<OrdersListProps> = ({ orders, isLoading, onUpd
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
                   <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
                     <h4 className="font-bold text-gray-700 mb-4 flex items-center gap-2">
-                      <User size={18} /> Datos del Cliente
+                       <User size={18} /> Datos del Cliente
                     </h4>
                     <div className="space-y-2 text-sm text-gray-600">
                       <p><span className="font-semibold">Email:</span> {order.customerEmail}</p>
@@ -220,6 +226,41 @@ export const OrdersList: React.FC<OrdersListProps> = ({ orders, isLoading, onUpd
                       {order.customerAddress && <p><span className="font-semibold">Dir:</span> {order.customerAddress}</p>}
                       {order.customerNote && <p><span className="font-semibold">Nota:</span> {order.customerNote}</p>}
                     </div>
+
+                    {/* Fondo Seleccionado */}
+                     <div className="mt-6 pt-6 border-t border-gray-100">
+                        <h4 className="font-bold text-gray-700 mb-2 text-xs uppercase">Fondo Seleccionado</h4>
+                        {order.backgroundId === CUSTOM_BACKGROUND_ID && order.customBackgroundUrl ? (
+                           <div className="flex items-center gap-3 bg-gray-50 p-2 rounded-lg border border-gray-100">
+                             <div className="relative w-12 h-16 shrink-0 bg-white rounded overflow-hidden border border-gray-200 cursor-pointer hover:scale-105 transition-transform"
+                                  onClick={() => setSelectedImage({ item: { id: 0, name: 'Fondo personalizado', description: 'fondoPersonalizado', image: order.customBackgroundUrl!, category: 'background', sexo: 'neutral' }, label: 'Fondo personalizado' })}
+                             >
+                               <Image src={order.customBackgroundUrl} alt="Fondo personalizado" fill className="object-cover"/>
+                             </div>
+                             <div>
+                               <p className="font-bold text-sm text-gray-900">Fondo personalizado</p>
+                               <p className="text-xs text-gray-500 line-clamp-1">fondoPersonalizado</p>
+                             </div>
+                           </div>
+                        ) : (() => {
+                           const bgId = order.backgroundId || 1;
+                           const fondo = Fondos.find(f => f.id === bgId);
+                           if (!fondo) return <p className="text-sm text-gray-500">ID: {bgId}</p>;
+                           return (
+                               <div className="flex items-center gap-3 bg-gray-50 p-2 rounded-lg border border-gray-100">
+                                   <div className="relative w-12 h-16 shrink-0 bg-white rounded overflow-hidden border border-gray-200 cursor-pointer hover:scale-105 transition-transform"
+                                        onClick={() => setSelectedImage({ item: { id: fondo.id, name: fondo.name, description: fondo.description, image: fondo.image, category: 'background', sexo: 'neutral' }, label: 'Fondo' })}
+                                   >
+                                       <Image src={fondo.image} alt={fondo.name} fill className="object-contain"/>
+                                   </div>
+                                   <div>
+                                       <p className="font-bold text-sm text-gray-900">{fondo.name}</p>
+                                       <p className="text-xs text-gray-500 line-clamp-1">{fondo.description}</p>
+                                   </div>
+                               </div>
+                           );
+                        })()}
+                     </div>
                   </div>
 
                   <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
@@ -252,6 +293,30 @@ export const OrdersList: React.FC<OrdersListProps> = ({ orders, isLoading, onUpd
                     </div>
                   </div>
                 </div>
+
+                {/* Mascota (si hay) */}
+                {order.petId != null && (() => {
+                  const pet = pets.find(p => p.id === order.petId);
+                  if (!pet) return null;
+                  return (
+                    <div className="mb-8">
+                      <h4 className="font-bold text-gray-800 mb-4 text-lg flex items-center gap-2">
+                        <PawPrint size={20} className="text-amber-600" /> Mascota
+                      </h4>
+                      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 flex items-center gap-4">
+                        <div className="relative w-16 h-16 shrink-0 rounded-lg overflow-hidden border border-gray-200 cursor-pointer hover:scale-105 transition-transform bg-gray-50"
+                          onClick={() => setSelectedImage({ item: { id: pet.id, name: pet.name, description: pet.description ?? '', image: pet.image, category: 'accs', sexo: 'neutral' }, label: 'Mascota' })}
+                        >
+                          <Image src={pet.image} alt={pet.name} fill className="object-contain" />
+                        </div>
+                        <div>
+                          <p className="font-bold text-gray-900">{pet.name}</p>
+                          <p className="text-xs text-gray-500">+$1.500</p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
 
                 {/* Figuras */}
                 <h4 className="font-bold text-gray-800 mb-4 text-lg">Figuras Configuradas ({order.figures.length})</h4>
@@ -376,12 +441,37 @@ export const OrdersList: React.FC<OrdersListProps> = ({ orders, isLoading, onUpd
                 <p className="text-xs text-gray-500 font-semibold uppercase">{selectedImage.label}</p>
                 <h3 className="text-lg font-bold text-gray-900">{selectedImage.item.name}</h3>
               </div>
-              <button 
-                onClick={() => setSelectedImage(null)}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-              >
-                <X size={20} className="text-gray-500" />
-              </button>
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-1.5"
+                  onClick={async () => {
+                    try {
+                      const res = await fetch(selectedImage.item.image, { mode: 'cors' });
+                      const blob = await res.blob();
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement('a');
+                      a.href = url;
+                      a.download = `${selectedImage.label}-${selectedImage.item.name.replace(/\s+/g, '-')}.${blob.type.includes('png') ? 'png' : 'jpg'}`;
+                      a.click();
+                      URL.revokeObjectURL(url);
+                    } catch {
+                      window.open(selectedImage.item.image, '_blank');
+                    }
+                  }}
+                >
+                  <Download size={16} />
+                  Descargar
+                </Button>
+                <button 
+                  onClick={() => setSelectedImage(null)}
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                  title="Cerrar"
+                >
+                  <X size={20} className="text-gray-500" />
+                </button>
+              </div>
             </div>
 
             <div className="relative aspect-square bg-gray-50">

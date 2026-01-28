@@ -1,6 +1,9 @@
 "use client";
 import React from 'react';
-import { ChevronLeft, Check, User, ShoppingCart, Mail, Phone, MapPin, Mars, Venus } from 'lucide-react';
+import { Fondos } from '~/data/Lego/fondos';
+import { pets } from '~/data/Lego/pets';
+import { CUSTOM_BACKGROUND_ID } from '~/lib/cloudinary';
+import { ChevronLeft, Check, User, ShoppingCart, Mail, Phone, MapPin, Mars, Venus, PawPrint } from 'lucide-react';
 import Image from 'next/image';
 import type { Plan } from './PlanSelector';
 import type { CustomerInfo } from './CustomerInfoForm';
@@ -17,6 +20,8 @@ interface FigureSelection {
     accs: number[];
 }
 
+const PET_EXTRA_COST = 1500;
+
 interface OrderSummaryProps {
     plan: Plan;
     selections: {
@@ -27,6 +32,10 @@ interface OrderSummaryProps {
     };
     totalPrice: number;
     extraAccessoriesCount: number;
+    petId: number | null;
+    backgroundId: number;
+    /** URL de imagen cuando backgroundId === CUSTOM_BACKGROUND_ID (fondo personalizado) */
+    customBackgroundUrl?: string | null;
     customerInfo?: CustomerInfo;
     onBack: () => void;
     onConfirm: () => void;
@@ -37,6 +46,9 @@ export const OrderSummary: React.FC<OrderSummaryProps> = ({
     selections,
     totalPrice,
     extraAccessoriesCount,
+    petId,
+    backgroundId,
+    customBackgroundUrl = null,
     customerInfo,
     onBack,
     onConfirm,
@@ -156,6 +168,46 @@ export const OrderSummary: React.FC<OrderSummaryProps> = ({
                         <p className="text-3xl font-black">${plan.price.toLocaleString()}</p>
                     </div>
                 </div>
+            </div>
+
+            {/* Fondo Seleccionado */}
+            <div className="bg-white rounded-3xl p-6 mb-8 shadow-lg border-2 border-gray-100">
+                <h3 className="text-xl font-black text-gray-900 mb-4">Fondo Seleccionado</h3>
+                {backgroundId === CUSTOM_BACKGROUND_ID && customBackgroundUrl ? (
+                    <div className="flex items-center gap-4">
+                        <div className="relative w-20 h-28 shrink-0 bg-gray-50 rounded-lg overflow-hidden border border-gray-200">
+                            <Image
+                                src={customBackgroundUrl}
+                                alt="Fondo personalizado"
+                                fill
+                                className="object-cover"
+                            />
+                        </div>
+                        <div>
+                            <h4 className="font-bold text-gray-900 text-lg">Fondo personalizado</h4>
+                            <p className="text-gray-500">Imagen subida por el cliente (fondoPersonalizado)</p>
+                        </div>
+                    </div>
+                ) : (() => {
+                    const fondo = Fondos.find(f => f.id === backgroundId);
+                    if (!fondo) return null;
+                    return (
+                        <div className="flex items-center gap-4">
+                            <div className="relative w-20 h-28 shrink-0 bg-gray-50 rounded-lg overflow-hidden border border-gray-200">
+                                <Image
+                                    src={fondo.image}
+                                    alt={fondo.name}
+                                    fill
+                                    className="object-contain"
+                                />
+                            </div>
+                            <div>
+                                <h4 className="font-bold text-gray-900 text-lg">{fondo.name}</h4>
+                                <p className="text-gray-500">{fondo.description}</p>
+                            </div>
+                        </div>
+                    );
+                })()}
             </div>
 
             {/* Figuras configuradas */}
@@ -300,6 +352,40 @@ export const OrderSummary: React.FC<OrderSummaryProps> = ({
                 })}
             </div>
 
+            {/* Mascota seleccionada (si aplica) */}
+            {petId !== null && (() => {
+                const pet = pets.find(p => p.id === petId);
+                if (!pet) return null;
+                return (
+                    <div className="bg-white rounded-3xl p-6 mb-8 shadow-lg border-2 border-gray-100">
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="bg-amber-500 text-white p-2 rounded-xl">
+                                <PawPrint size={24} />
+                            </div>
+                            <div>
+                                <h3 className="text-xl font-black text-gray-900">Mascota</h3>
+                                <p className="text-sm text-gray-500">+${PET_EXTRA_COST.toLocaleString()}</p>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-4 p-3 bg-gray-50 rounded-xl">
+                            <div className="relative w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden border border-gray-200">
+                                <Image
+                                    src={pet.image}
+                                    alt={pet.name}
+                                    fill
+                                    className="object-contain"
+                                />
+                            </div>
+                            <div>
+                                <p className="text-xs text-gray-500 font-semibold">Mascota seleccionada</p>
+                                <p className="text-sm font-bold text-gray-900">{pet.name}</p>
+                            </div>
+                            <Check size={20} className="text-green-500 ml-auto" />
+                        </div>
+                    </div>
+                );
+            })()}
+
             {/* Resumen de precio */}
             <div className="bg-white rounded-3xl p-6 shadow-xl border-2 border-gray-200 mb-8">
                 <h3 className="text-xl font-black text-gray-900 mb-4">Resumen de tu pedido</h3>
@@ -319,6 +405,13 @@ export const OrderSummary: React.FC<OrderSummaryProps> = ({
                         <div className="flex justify-between items-center">
                             <span className="text-gray-600">Figura 4 adicional</span>
                             <span className="font-bold text-green-600">+$3.000</span>
+                        </div>
+                    )}
+                    
+                    {petId !== null && (
+                        <div className="flex justify-between items-center">
+                            <span className="text-gray-600">Mascota</span>
+                            <span className="font-bold text-green-600">+${PET_EXTRA_COST.toLocaleString()}</span>
                         </div>
                     )}
                     

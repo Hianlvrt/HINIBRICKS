@@ -36,6 +36,7 @@ const PLANS: Plan[] = [
             'Permite agregar mascota: +$1.500 c/u'
         ],
         popular: true,
+        allowsExtra: true,
     },
     {
         id: 'familiar',

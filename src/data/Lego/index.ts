@@ -19,7 +19,7 @@ export interface LegoItem {
     name: string;
     description: string;
     image: string;
-    category: 'hair' | 'face' | 'body' | 'legs' | 'accs';
+    category: 'hair' | 'face' | 'body' | 'legs' | 'accs' | 'background';
     sexo: Sexo;
 }
 

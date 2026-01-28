@@ -11,6 +11,12 @@ export const env = createEnv({
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
+    /** API key de Resend para envío de correos (pedido confirmado → cliente y admin) */
+    RESEND_API_KEY: z.string().optional(),
+    /** Remitente de correos (ej. "HiniBricks <pedidos@hinibricks.cl>") */
+    EMAIL_FROM: z.string().optional(),
+    /** Correo del administrador para notificación de nuevos pedidos */
+    ADMIN_EMAIL: z.string().email().optional(),
   },
 
   /**
@@ -21,6 +27,7 @@ export const env = createEnv({
   client: {
     NEXT_PUBLIC_SHOW_COMING_SOON: z.string().optional(),
     NEXT_PUBLIC_LAUNCH_DATE: z.string().optional(),
+    NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET: z.string().optional(),
   },
 
   /**
@@ -30,8 +37,12 @@ export const env = createEnv({
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
+    RESEND_API_KEY: process.env.RESEND_API_KEY,
+    EMAIL_FROM: process.env.EMAIL_FROM,
+    ADMIN_EMAIL: process.env.ADMIN_EMAIL,
     NEXT_PUBLIC_SHOW_COMING_SOON: process.env.NEXT_PUBLIC_SHOW_COMING_SOON,
     NEXT_PUBLIC_LAUNCH_DATE: process.env.NEXT_PUBLIC_LAUNCH_DATE,
+    NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET: process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

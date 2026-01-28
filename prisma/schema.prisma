@@ -27,7 +27,10 @@ model LegoOrder {
     planPrice              Int
     totalPrice             Int
     extraAccessoriesCount  Int           @default(0)
+    petId                  Int?          // ID de mascota si el cliente agregó una
     status                 String        @default("pending") // pending, confirmed, completed, cancelled
+    backgroundId           Int           @default(1)
+    customBackgroundUrl    String?       // URL en Cloudinary cuando backgroundId === 0 (fondo personalizado)
     customerName           String
     customerEmail          String
     customerPhone          String
@@ -60,4 +63,13 @@ model LegoFigure {
     order       LegoOrder  @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
     @@index([orderId])
+}
+
+// Inventario: ítems deshabilitados (se muestran pero no se pueden seleccionar)
+model DisabledProduct {
+    id     Int    @id @default(autoincrement())
+    type   String // 'lego' | 'pet' | 'fondo'
+    itemId Int
+    @@unique([type, itemId])
+    @@index([type])
 }

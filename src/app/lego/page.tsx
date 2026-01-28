@@ -2,7 +2,9 @@
 import React, { useState } from 'react'
 import { toast } from 'sonner'
 import { api } from '~/trpc/react'
+import { CUSTOM_BACKGROUND_ID } from '~/lib/cloudinary'
 import { LegoConfigurator } from '../_components/Lego/LegoConfigurator'
+import { BackgroundSelector } from '../_components/Lego/BackgroundSelector'
 import { PlanSelector, type Plan } from '../_components/Lego/PlanSelector'
 import { CustomerInfoForm, type CustomerInfo } from '../_components/Lego/CustomerInfoForm'
 import { OrderSummary } from '../_components/Lego/OrderSummary'
@@ -21,11 +23,18 @@ interface FigureSelection {
 }
 
 export default function LegoPage() {
-  // tRPC mutation
   const createOrder = api.order.create.useMutation()
+  const { data: disabledIds } = api.disabledProducts.getIds.useQuery()
+
+  const disabledLegoIds = disabledIds?.lego ?? []
+  const disabledPetIds = disabledIds?.pet ?? []
+  const disabledFondoIds = disabledIds?.fondo ?? []
 
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null)
   const [showCustomerForm, setShowCustomerForm] = useState(false)
+  const [showBackgroundSelection, setShowBackgroundSelection] = useState(false)
+  const [selectedBackgroundId, setSelectedBackgroundId] = useState<number | null>(null)
+  const [customBackgroundUrl, setCustomBackgroundUrl] = useState<string | null>(null)
   const [showSummary, setShowSummary] = useState(false)
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo | null>(null)
   const [showSuccessModal, setShowSuccessModal] = useState(false)
@@ -39,6 +48,7 @@ export default function LegoPage() {
     };
     totalPrice: number;
     extraAccessoriesCount: number;
+    petId: number | null;
   } | null>(null)
 
   const handlePlanSelect = (plan: Plan) => {
@@ -48,6 +58,9 @@ export default function LegoPage() {
   const handleBackToPlanSelection = () => {
     setSelectedPlan(null)
     setShowCustomerForm(false)
+    setShowBackgroundSelection(false)
+    setSelectedBackgroundId(null)
+    setCustomBackgroundUrl(null)
     setShowSummary(false)
     setCustomerInfo(null)
     setOrderData(null)
@@ -62,12 +75,27 @@ export default function LegoPage() {
     };
     totalPrice: number;
     extraAccessoriesCount: number;
+    petId: number | null;
   }) => {
     setOrderData(data)
+    setShowBackgroundSelection(true)
+  }
+
+  const handleBackgroundSelect = (id: number, customImageUrl?: string) => {
+    setSelectedBackgroundId(id)
+    setCustomBackgroundUrl(id === CUSTOM_BACKGROUND_ID ? (customImageUrl ?? null) : null)
+    setShowBackgroundSelection(false)
     setShowCustomerForm(true)
   }
 
+  const handleBackToBackgroundSelection = () => {
+    setShowCustomerForm(false)
+    setShowSummary(false)
+    setShowBackgroundSelection(true)
+  }
+
   const handleBackToConfigurator = () => {
+    setShowBackgroundSelection(false)
     setShowCustomerForm(false)
     setShowSummary(false)
     // No limpiamos orderData para mantener la configuración
@@ -105,6 +133,9 @@ export default function LegoPage() {
         selections: orderData.selections,
         totalPrice: orderData.totalPrice,
         extraAccessoriesCount: orderData.extraAccessoriesCount,
+        backgroundId: selectedBackgroundId ?? 1,
+        customBackgroundUrl: selectedBackgroundId === CUSTOM_BACKGROUND_ID ? customBackgroundUrl ?? undefined : undefined,
+        petId: orderData.petId ?? null,
         customerInfo: customerInfo,
       },
       {
@@ -168,11 +199,20 @@ export default function LegoPage() {
         {!selectedPlan ? (
           /* Paso 1: Selección de plan */
           <PlanSelector onSelectPlan={handlePlanSelect} />
+        ) : showBackgroundSelection ? (
+            /* Nuevo Paso: Selección de Fondo */
+            <BackgroundSelector
+                onSelect={handleBackgroundSelect}
+                onBack={handleBackToConfigurator}
+                initialSelection={selectedBackgroundId}
+                initialCustomUrl={customBackgroundUrl}
+                disabledFondoIds={disabledFondoIds}
+            />
         ) : showCustomerForm ? (
           /* Paso 3: Formulario de información personal */
           <CustomerInfoForm
             initialData={customerInfo}
-            onBack={handleBackToConfigurator}
+            onBack={handleBackToBackgroundSelection}
             onSubmit={handleCustomerInfoSubmit}
           />
         ) : showSummary && orderData && customerInfo ? (
@@ -182,6 +222,9 @@ export default function LegoPage() {
             selections={orderData.selections}
             totalPrice={orderData.totalPrice}
             extraAccessoriesCount={orderData.extraAccessoriesCount}
+            petId={orderData.petId ?? null}
+            backgroundId={selectedBackgroundId ?? 1}
+            customBackgroundUrl={selectedBackgroundId === CUSTOM_BACKGROUND_ID ? customBackgroundUrl : null}
             customerInfo={customerInfo}
             onBack={handleBackToCustomerForm}
             onConfirm={handleConfirmOrder}
@@ -223,6 +266,8 @@ export default function LegoPage() {
             <LegoConfigurator 
               plan={selectedPlan}
               initialSelections={orderData?.selections}
+              disabledLegoIds={disabledLegoIds}
+              disabledPetIds={disabledPetIds}
               onShowSummary={handleGoToCustomerForm}
             />
           </div>

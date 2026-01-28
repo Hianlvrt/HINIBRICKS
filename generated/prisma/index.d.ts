@@ -28,6 +28,11 @@ export type LegoOrder = $Result.DefaultSelection<Prisma.$LegoOrderPayload>
  * 
  */
 export type LegoFigure = $Result.DefaultSelection<Prisma.$LegoFigurePayload>
+/**
+ * Model DisabledProduct
+ * 
+ */
+export type DisabledProduct = $Result.DefaultSelection<Prisma.$DisabledProductPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -176,6 +181,16 @@ export class PrismaClient<
     * ```
     */
   get legoFigure(): Prisma.LegoFigureDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.disabledProduct`: Exposes CRUD operations for the **DisabledProduct** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more DisabledProducts
+    * const disabledProducts = await prisma.disabledProduct.findMany()
+    * ```
+    */
+  get disabledProduct(): Prisma.DisabledProductDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -619,7 +634,8 @@ export namespace Prisma {
   export const ModelName: {
     Post: 'Post',
     LegoOrder: 'LegoOrder',
-    LegoFigure: 'LegoFigure'
+    LegoFigure: 'LegoFigure',
+    DisabledProduct: 'DisabledProduct'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -638,7 +654,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "post" | "legoOrder" | "legoFigure"
+      modelProps: "post" | "legoOrder" | "legoFigure" | "disabledProduct"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -864,6 +880,80 @@ export namespace Prisma {
           }
         }
       }
+      DisabledProduct: {
+        payload: Prisma.$DisabledProductPayload<ExtArgs>
+        fields: Prisma.DisabledProductFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.DisabledProductFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DisabledProductPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.DisabledProductFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DisabledProductPayload>
+          }
+          findFirst: {
+            args: Prisma.DisabledProductFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DisabledProductPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.DisabledProductFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DisabledProductPayload>
+          }
+          findMany: {
+            args: Prisma.DisabledProductFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DisabledProductPayload>[]
+          }
+          create: {
+            args: Prisma.DisabledProductCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DisabledProductPayload>
+          }
+          createMany: {
+            args: Prisma.DisabledProductCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.DisabledProductCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DisabledProductPayload>[]
+          }
+          delete: {
+            args: Prisma.DisabledProductDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DisabledProductPayload>
+          }
+          update: {
+            args: Prisma.DisabledProductUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DisabledProductPayload>
+          }
+          deleteMany: {
+            args: Prisma.DisabledProductDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.DisabledProductUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.DisabledProductUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DisabledProductPayload>[]
+          }
+          upsert: {
+            args: Prisma.DisabledProductUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DisabledProductPayload>
+          }
+          aggregate: {
+            args: Prisma.DisabledProductAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateDisabledProduct>
+          }
+          groupBy: {
+            args: Prisma.DisabledProductGroupByArgs<ExtArgs>
+            result: $Utils.Optional<DisabledProductGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.DisabledProductCountArgs<ExtArgs>
+            result: $Utils.Optional<DisabledProductCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -963,6 +1053,7 @@ export namespace Prisma {
     post?: PostOmit
     legoOrder?: LegoOrderOmit
     legoFigure?: LegoFigureOmit
+    disabledProduct?: DisabledProductOmit
   }
 
   /* Types for Logging */
@@ -2106,6 +2197,8 @@ export namespace Prisma {
     planPrice: number | null
     totalPrice: number | null
     extraAccessoriesCount: number | null
+    petId: number | null
+    backgroundId: number | null
   }
 
   export type LegoOrderSumAggregateOutputType = {
@@ -2113,6 +2206,8 @@ export namespace Prisma {
     planPrice: number | null
     totalPrice: number | null
     extraAccessoriesCount: number | null
+    petId: number | null
+    backgroundId: number | null
   }
 
   export type LegoOrderMinAggregateOutputType = {
@@ -2122,7 +2217,10 @@ export namespace Prisma {
     planPrice: number | null
     totalPrice: number | null
     extraAccessoriesCount: number | null
+    petId: number | null
     status: string | null
+    backgroundId: number | null
+    customBackgroundUrl: string | null
     customerName: string | null
     customerEmail: string | null
     customerPhone: string | null
@@ -2142,7 +2240,10 @@ export namespace Prisma {
     planPrice: number | null
     totalPrice: number | null
     extraAccessoriesCount: number | null
+    petId: number | null
     status: string | null
+    backgroundId: number | null
+    customBackgroundUrl: string | null
     customerName: string | null
     customerEmail: string | null
     customerPhone: string | null
@@ -2162,7 +2263,10 @@ export namespace Prisma {
     planPrice: number
     totalPrice: number
     extraAccessoriesCount: number
+    petId: number
     status: number
+    backgroundId: number
+    customBackgroundUrl: number
     customerName: number
     customerEmail: number
     customerPhone: number
@@ -2182,6 +2286,8 @@ export namespace Prisma {
     planPrice?: true
     totalPrice?: true
     extraAccessoriesCount?: true
+    petId?: true
+    backgroundId?: true
   }
 
   export type LegoOrderSumAggregateInputType = {
@@ -2189,6 +2295,8 @@ export namespace Prisma {
     planPrice?: true
     totalPrice?: true
     extraAccessoriesCount?: true
+    petId?: true
+    backgroundId?: true
   }
 
   export type LegoOrderMinAggregateInputType = {
@@ -2198,7 +2306,10 @@ export namespace Prisma {
     planPrice?: true
     totalPrice?: true
     extraAccessoriesCount?: true
+    petId?: true
     status?: true
+    backgroundId?: true
+    customBackgroundUrl?: true
     customerName?: true
     customerEmail?: true
     customerPhone?: true
@@ -2218,7 +2329,10 @@ export namespace Prisma {
     planPrice?: true
     totalPrice?: true
     extraAccessoriesCount?: true
+    petId?: true
     status?: true
+    backgroundId?: true
+    customBackgroundUrl?: true
     customerName?: true
     customerEmail?: true
     customerPhone?: true
@@ -2238,7 +2352,10 @@ export namespace Prisma {
     planPrice?: true
     totalPrice?: true
     extraAccessoriesCount?: true
+    petId?: true
     status?: true
+    backgroundId?: true
+    customBackgroundUrl?: true
     customerName?: true
     customerEmail?: true
     customerPhone?: true
@@ -2345,7 +2462,10 @@ export namespace Prisma {
     planPrice: number
     totalPrice: number
     extraAccessoriesCount: number
+    petId: number | null
     status: string
+    backgroundId: number
+    customBackgroundUrl: string | null
     customerName: string
     customerEmail: string
     customerPhone: string
@@ -2384,7 +2504,10 @@ export namespace Prisma {
     planPrice?: boolean
     totalPrice?: boolean
     extraAccessoriesCount?: boolean
+    petId?: boolean
     status?: boolean
+    backgroundId?: boolean
+    customBackgroundUrl?: boolean
     customerName?: boolean
     customerEmail?: boolean
     customerPhone?: boolean
@@ -2406,7 +2529,10 @@ export namespace Prisma {
     planPrice?: boolean
     totalPrice?: boolean
     extraAccessoriesCount?: boolean
+    petId?: boolean
     status?: boolean
+    backgroundId?: boolean
+    customBackgroundUrl?: boolean
     customerName?: boolean
     customerEmail?: boolean
     customerPhone?: boolean
@@ -2426,7 +2552,10 @@ export namespace Prisma {
     planPrice?: boolean
     totalPrice?: boolean
     extraAccessoriesCount?: boolean
+    petId?: boolean
     status?: boolean
+    backgroundId?: boolean
+    customBackgroundUrl?: boolean
     customerName?: boolean
     customerEmail?: boolean
     customerPhone?: boolean
@@ -2446,7 +2575,10 @@ export namespace Prisma {
     planPrice?: boolean
     totalPrice?: boolean
     extraAccessoriesCount?: boolean
+    petId?: boolean
     status?: boolean
+    backgroundId?: boolean
+    customBackgroundUrl?: boolean
     customerName?: boolean
     customerEmail?: boolean
     customerPhone?: boolean
@@ -2459,7 +2591,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type LegoOrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "planType" | "planName" | "planPrice" | "totalPrice" | "extraAccessoriesCount" | "status" | "customerName" | "customerEmail" | "customerPhone" | "customerRut" | "customerRegion" | "customerComuna" | "customerAddress" | "customerNote" | "createdAt" | "updatedAt", ExtArgs["result"]["legoOrder"]>
+  export type LegoOrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "planType" | "planName" | "planPrice" | "totalPrice" | "extraAccessoriesCount" | "petId" | "status" | "backgroundId" | "customBackgroundUrl" | "customerName" | "customerEmail" | "customerPhone" | "customerRut" | "customerRegion" | "customerComuna" | "customerAddress" | "customerNote" | "createdAt" | "updatedAt", ExtArgs["result"]["legoOrder"]>
   export type LegoOrderInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     figures?: boolean | LegoOrder$figuresArgs<ExtArgs>
     _count?: boolean | LegoOrderCountOutputTypeDefaultArgs<ExtArgs>
@@ -2479,7 +2611,10 @@ export namespace Prisma {
       planPrice: number
       totalPrice: number
       extraAccessoriesCount: number
+      petId: number | null
       status: string
+      backgroundId: number
+      customBackgroundUrl: string | null
       customerName: string
       customerEmail: string
       customerPhone: string
@@ -2920,7 +3055,10 @@ export namespace Prisma {
     readonly planPrice: FieldRef<"LegoOrder", 'Int'>
     readonly totalPrice: FieldRef<"LegoOrder", 'Int'>
     readonly extraAccessoriesCount: FieldRef<"LegoOrder", 'Int'>
+    readonly petId: FieldRef<"LegoOrder", 'Int'>
     readonly status: FieldRef<"LegoOrder", 'String'>
+    readonly backgroundId: FieldRef<"LegoOrder", 'Int'>
+    readonly customBackgroundUrl: FieldRef<"LegoOrder", 'String'>
     readonly customerName: FieldRef<"LegoOrder", 'String'>
     readonly customerEmail: FieldRef<"LegoOrder", 'String'>
     readonly customerPhone: FieldRef<"LegoOrder", 'String'>
@@ -4530,6 +4668,1013 @@ export namespace Prisma {
 
 
   /**
+   * Model DisabledProduct
+   */
+
+  export type AggregateDisabledProduct = {
+    _count: DisabledProductCountAggregateOutputType | null
+    _avg: DisabledProductAvgAggregateOutputType | null
+    _sum: DisabledProductSumAggregateOutputType | null
+    _min: DisabledProductMinAggregateOutputType | null
+    _max: DisabledProductMaxAggregateOutputType | null
+  }
+
+  export type DisabledProductAvgAggregateOutputType = {
+    id: number | null
+    itemId: number | null
+  }
+
+  export type DisabledProductSumAggregateOutputType = {
+    id: number | null
+    itemId: number | null
+  }
+
+  export type DisabledProductMinAggregateOutputType = {
+    id: number | null
+    type: string | null
+    itemId: number | null
+  }
+
+  export type DisabledProductMaxAggregateOutputType = {
+    id: number | null
+    type: string | null
+    itemId: number | null
+  }
+
+  export type DisabledProductCountAggregateOutputType = {
+    id: number
+    type: number
+    itemId: number
+    _all: number
+  }
+
+
+  export type DisabledProductAvgAggregateInputType = {
+    id?: true
+    itemId?: true
+  }
+
+  export type DisabledProductSumAggregateInputType = {
+    id?: true
+    itemId?: true
+  }
+
+  export type DisabledProductMinAggregateInputType = {
+    id?: true
+    type?: true
+    itemId?: true
+  }
+
+  export type DisabledProductMaxAggregateInputType = {
+    id?: true
+    type?: true
+    itemId?: true
+  }
+
+  export type DisabledProductCountAggregateInputType = {
+    id?: true
+    type?: true
+    itemId?: true
+    _all?: true
+  }
+
+  export type DisabledProductAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which DisabledProduct to aggregate.
+     */
+    where?: DisabledProductWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DisabledProducts to fetch.
+     */
+    orderBy?: DisabledProductOrderByWithRelationInput | DisabledProductOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: DisabledProductWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DisabledProducts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DisabledProducts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned DisabledProducts
+    **/
+    _count?: true | DisabledProductCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: DisabledProductAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: DisabledProductSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: DisabledProductMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: DisabledProductMaxAggregateInputType
+  }
+
+  export type GetDisabledProductAggregateType<T extends DisabledProductAggregateArgs> = {
+        [P in keyof T & keyof AggregateDisabledProduct]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateDisabledProduct[P]>
+      : GetScalarType<T[P], AggregateDisabledProduct[P]>
+  }
+
+
+
+
+  export type DisabledProductGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DisabledProductWhereInput
+    orderBy?: DisabledProductOrderByWithAggregationInput | DisabledProductOrderByWithAggregationInput[]
+    by: DisabledProductScalarFieldEnum[] | DisabledProductScalarFieldEnum
+    having?: DisabledProductScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: DisabledProductCountAggregateInputType | true
+    _avg?: DisabledProductAvgAggregateInputType
+    _sum?: DisabledProductSumAggregateInputType
+    _min?: DisabledProductMinAggregateInputType
+    _max?: DisabledProductMaxAggregateInputType
+  }
+
+  export type DisabledProductGroupByOutputType = {
+    id: number
+    type: string
+    itemId: number
+    _count: DisabledProductCountAggregateOutputType | null
+    _avg: DisabledProductAvgAggregateOutputType | null
+    _sum: DisabledProductSumAggregateOutputType | null
+    _min: DisabledProductMinAggregateOutputType | null
+    _max: DisabledProductMaxAggregateOutputType | null
+  }
+
+  type GetDisabledProductGroupByPayload<T extends DisabledProductGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<DisabledProductGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof DisabledProductGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], DisabledProductGroupByOutputType[P]>
+            : GetScalarType<T[P], DisabledProductGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type DisabledProductSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    type?: boolean
+    itemId?: boolean
+  }, ExtArgs["result"]["disabledProduct"]>
+
+  export type DisabledProductSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    type?: boolean
+    itemId?: boolean
+  }, ExtArgs["result"]["disabledProduct"]>
+
+  export type DisabledProductSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    type?: boolean
+    itemId?: boolean
+  }, ExtArgs["result"]["disabledProduct"]>
+
+  export type DisabledProductSelectScalar = {
+    id?: boolean
+    type?: boolean
+    itemId?: boolean
+  }
+
+  export type DisabledProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "type" | "itemId", ExtArgs["result"]["disabledProduct"]>
+
+  export type $DisabledProductPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "DisabledProduct"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      type: string
+      itemId: number
+    }, ExtArgs["result"]["disabledProduct"]>
+    composites: {}
+  }
+
+  type DisabledProductGetPayload<S extends boolean | null | undefined | DisabledProductDefaultArgs> = $Result.GetResult<Prisma.$DisabledProductPayload, S>
+
+  type DisabledProductCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<DisabledProductFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: DisabledProductCountAggregateInputType | true
+    }
+
+  export interface DisabledProductDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['DisabledProduct'], meta: { name: 'DisabledProduct' } }
+    /**
+     * Find zero or one DisabledProduct that matches the filter.
+     * @param {DisabledProductFindUniqueArgs} args - Arguments to find a DisabledProduct
+     * @example
+     * // Get one DisabledProduct
+     * const disabledProduct = await prisma.disabledProduct.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends DisabledProductFindUniqueArgs>(args: SelectSubset<T, DisabledProductFindUniqueArgs<ExtArgs>>): Prisma__DisabledProductClient<$Result.GetResult<Prisma.$DisabledProductPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one DisabledProduct that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {DisabledProductFindUniqueOrThrowArgs} args - Arguments to find a DisabledProduct
+     * @example
+     * // Get one DisabledProduct
+     * const disabledProduct = await prisma.disabledProduct.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends DisabledProductFindUniqueOrThrowArgs>(args: SelectSubset<T, DisabledProductFindUniqueOrThrowArgs<ExtArgs>>): Prisma__DisabledProductClient<$Result.GetResult<Prisma.$DisabledProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first DisabledProduct that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DisabledProductFindFirstArgs} args - Arguments to find a DisabledProduct
+     * @example
+     * // Get one DisabledProduct
+     * const disabledProduct = await prisma.disabledProduct.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends DisabledProductFindFirstArgs>(args?: SelectSubset<T, DisabledProductFindFirstArgs<ExtArgs>>): Prisma__DisabledProductClient<$Result.GetResult<Prisma.$DisabledProductPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first DisabledProduct that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DisabledProductFindFirstOrThrowArgs} args - Arguments to find a DisabledProduct
+     * @example
+     * // Get one DisabledProduct
+     * const disabledProduct = await prisma.disabledProduct.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends DisabledProductFindFirstOrThrowArgs>(args?: SelectSubset<T, DisabledProductFindFirstOrThrowArgs<ExtArgs>>): Prisma__DisabledProductClient<$Result.GetResult<Prisma.$DisabledProductPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more DisabledProducts that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DisabledProductFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all DisabledProducts
+     * const disabledProducts = await prisma.disabledProduct.findMany()
+     * 
+     * // Get first 10 DisabledProducts
+     * const disabledProducts = await prisma.disabledProduct.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const disabledProductWithIdOnly = await prisma.disabledProduct.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends DisabledProductFindManyArgs>(args?: SelectSubset<T, DisabledProductFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DisabledProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a DisabledProduct.
+     * @param {DisabledProductCreateArgs} args - Arguments to create a DisabledProduct.
+     * @example
+     * // Create one DisabledProduct
+     * const DisabledProduct = await prisma.disabledProduct.create({
+     *   data: {
+     *     // ... data to create a DisabledProduct
+     *   }
+     * })
+     * 
+     */
+    create<T extends DisabledProductCreateArgs>(args: SelectSubset<T, DisabledProductCreateArgs<ExtArgs>>): Prisma__DisabledProductClient<$Result.GetResult<Prisma.$DisabledProductPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many DisabledProducts.
+     * @param {DisabledProductCreateManyArgs} args - Arguments to create many DisabledProducts.
+     * @example
+     * // Create many DisabledProducts
+     * const disabledProduct = await prisma.disabledProduct.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends DisabledProductCreateManyArgs>(args?: SelectSubset<T, DisabledProductCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many DisabledProducts and returns the data saved in the database.
+     * @param {DisabledProductCreateManyAndReturnArgs} args - Arguments to create many DisabledProducts.
+     * @example
+     * // Create many DisabledProducts
+     * const disabledProduct = await prisma.disabledProduct.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many DisabledProducts and only return the `id`
+     * const disabledProductWithIdOnly = await prisma.disabledProduct.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends DisabledProductCreateManyAndReturnArgs>(args?: SelectSubset<T, DisabledProductCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DisabledProductPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a DisabledProduct.
+     * @param {DisabledProductDeleteArgs} args - Arguments to delete one DisabledProduct.
+     * @example
+     * // Delete one DisabledProduct
+     * const DisabledProduct = await prisma.disabledProduct.delete({
+     *   where: {
+     *     // ... filter to delete one DisabledProduct
+     *   }
+     * })
+     * 
+     */
+    delete<T extends DisabledProductDeleteArgs>(args: SelectSubset<T, DisabledProductDeleteArgs<ExtArgs>>): Prisma__DisabledProductClient<$Result.GetResult<Prisma.$DisabledProductPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one DisabledProduct.
+     * @param {DisabledProductUpdateArgs} args - Arguments to update one DisabledProduct.
+     * @example
+     * // Update one DisabledProduct
+     * const disabledProduct = await prisma.disabledProduct.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends DisabledProductUpdateArgs>(args: SelectSubset<T, DisabledProductUpdateArgs<ExtArgs>>): Prisma__DisabledProductClient<$Result.GetResult<Prisma.$DisabledProductPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more DisabledProducts.
+     * @param {DisabledProductDeleteManyArgs} args - Arguments to filter DisabledProducts to delete.
+     * @example
+     * // Delete a few DisabledProducts
+     * const { count } = await prisma.disabledProduct.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends DisabledProductDeleteManyArgs>(args?: SelectSubset<T, DisabledProductDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more DisabledProducts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DisabledProductUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many DisabledProducts
+     * const disabledProduct = await prisma.disabledProduct.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends DisabledProductUpdateManyArgs>(args: SelectSubset<T, DisabledProductUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more DisabledProducts and returns the data updated in the database.
+     * @param {DisabledProductUpdateManyAndReturnArgs} args - Arguments to update many DisabledProducts.
+     * @example
+     * // Update many DisabledProducts
+     * const disabledProduct = await prisma.disabledProduct.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more DisabledProducts and only return the `id`
+     * const disabledProductWithIdOnly = await prisma.disabledProduct.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends DisabledProductUpdateManyAndReturnArgs>(args: SelectSubset<T, DisabledProductUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DisabledProductPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one DisabledProduct.
+     * @param {DisabledProductUpsertArgs} args - Arguments to update or create a DisabledProduct.
+     * @example
+     * // Update or create a DisabledProduct
+     * const disabledProduct = await prisma.disabledProduct.upsert({
+     *   create: {
+     *     // ... data to create a DisabledProduct
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the DisabledProduct we want to update
+     *   }
+     * })
+     */
+    upsert<T extends DisabledProductUpsertArgs>(args: SelectSubset<T, DisabledProductUpsertArgs<ExtArgs>>): Prisma__DisabledProductClient<$Result.GetResult<Prisma.$DisabledProductPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of DisabledProducts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DisabledProductCountArgs} args - Arguments to filter DisabledProducts to count.
+     * @example
+     * // Count the number of DisabledProducts
+     * const count = await prisma.disabledProduct.count({
+     *   where: {
+     *     // ... the filter for the DisabledProducts we want to count
+     *   }
+     * })
+    **/
+    count<T extends DisabledProductCountArgs>(
+      args?: Subset<T, DisabledProductCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], DisabledProductCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a DisabledProduct.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DisabledProductAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends DisabledProductAggregateArgs>(args: Subset<T, DisabledProductAggregateArgs>): Prisma.PrismaPromise<GetDisabledProductAggregateType<T>>
+
+    /**
+     * Group by DisabledProduct.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DisabledProductGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends DisabledProductGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: DisabledProductGroupByArgs['orderBy'] }
+        : { orderBy?: DisabledProductGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, DisabledProductGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetDisabledProductGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the DisabledProduct model
+   */
+  readonly fields: DisabledProductFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for DisabledProduct.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__DisabledProductClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the DisabledProduct model
+   */
+  interface DisabledProductFieldRefs {
+    readonly id: FieldRef<"DisabledProduct", 'Int'>
+    readonly type: FieldRef<"DisabledProduct", 'String'>
+    readonly itemId: FieldRef<"DisabledProduct", 'Int'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * DisabledProduct findUnique
+   */
+  export type DisabledProductFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DisabledProduct
+     */
+    select?: DisabledProductSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DisabledProduct
+     */
+    omit?: DisabledProductOmit<ExtArgs> | null
+    /**
+     * Filter, which DisabledProduct to fetch.
+     */
+    where: DisabledProductWhereUniqueInput
+  }
+
+  /**
+   * DisabledProduct findUniqueOrThrow
+   */
+  export type DisabledProductFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DisabledProduct
+     */
+    select?: DisabledProductSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DisabledProduct
+     */
+    omit?: DisabledProductOmit<ExtArgs> | null
+    /**
+     * Filter, which DisabledProduct to fetch.
+     */
+    where: DisabledProductWhereUniqueInput
+  }
+
+  /**
+   * DisabledProduct findFirst
+   */
+  export type DisabledProductFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DisabledProduct
+     */
+    select?: DisabledProductSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DisabledProduct
+     */
+    omit?: DisabledProductOmit<ExtArgs> | null
+    /**
+     * Filter, which DisabledProduct to fetch.
+     */
+    where?: DisabledProductWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DisabledProducts to fetch.
+     */
+    orderBy?: DisabledProductOrderByWithRelationInput | DisabledProductOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for DisabledProducts.
+     */
+    cursor?: DisabledProductWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DisabledProducts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DisabledProducts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of DisabledProducts.
+     */
+    distinct?: DisabledProductScalarFieldEnum | DisabledProductScalarFieldEnum[]
+  }
+
+  /**
+   * DisabledProduct findFirstOrThrow
+   */
+  export type DisabledProductFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DisabledProduct
+     */
+    select?: DisabledProductSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DisabledProduct
+     */
+    omit?: DisabledProductOmit<ExtArgs> | null
+    /**
+     * Filter, which DisabledProduct to fetch.
+     */
+    where?: DisabledProductWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DisabledProducts to fetch.
+     */
+    orderBy?: DisabledProductOrderByWithRelationInput | DisabledProductOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for DisabledProducts.
+     */
+    cursor?: DisabledProductWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DisabledProducts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DisabledProducts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of DisabledProducts.
+     */
+    distinct?: DisabledProductScalarFieldEnum | DisabledProductScalarFieldEnum[]
+  }
+
+  /**
+   * DisabledProduct findMany
+   */
+  export type DisabledProductFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DisabledProduct
+     */
+    select?: DisabledProductSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DisabledProduct
+     */
+    omit?: DisabledProductOmit<ExtArgs> | null
+    /**
+     * Filter, which DisabledProducts to fetch.
+     */
+    where?: DisabledProductWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DisabledProducts to fetch.
+     */
+    orderBy?: DisabledProductOrderByWithRelationInput | DisabledProductOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing DisabledProducts.
+     */
+    cursor?: DisabledProductWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DisabledProducts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DisabledProducts.
+     */
+    skip?: number
+    distinct?: DisabledProductScalarFieldEnum | DisabledProductScalarFieldEnum[]
+  }
+
+  /**
+   * DisabledProduct create
+   */
+  export type DisabledProductCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DisabledProduct
+     */
+    select?: DisabledProductSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DisabledProduct
+     */
+    omit?: DisabledProductOmit<ExtArgs> | null
+    /**
+     * The data needed to create a DisabledProduct.
+     */
+    data: XOR<DisabledProductCreateInput, DisabledProductUncheckedCreateInput>
+  }
+
+  /**
+   * DisabledProduct createMany
+   */
+  export type DisabledProductCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many DisabledProducts.
+     */
+    data: DisabledProductCreateManyInput | DisabledProductCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * DisabledProduct createManyAndReturn
+   */
+  export type DisabledProductCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DisabledProduct
+     */
+    select?: DisabledProductSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the DisabledProduct
+     */
+    omit?: DisabledProductOmit<ExtArgs> | null
+    /**
+     * The data used to create many DisabledProducts.
+     */
+    data: DisabledProductCreateManyInput | DisabledProductCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * DisabledProduct update
+   */
+  export type DisabledProductUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DisabledProduct
+     */
+    select?: DisabledProductSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DisabledProduct
+     */
+    omit?: DisabledProductOmit<ExtArgs> | null
+    /**
+     * The data needed to update a DisabledProduct.
+     */
+    data: XOR<DisabledProductUpdateInput, DisabledProductUncheckedUpdateInput>
+    /**
+     * Choose, which DisabledProduct to update.
+     */
+    where: DisabledProductWhereUniqueInput
+  }
+
+  /**
+   * DisabledProduct updateMany
+   */
+  export type DisabledProductUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update DisabledProducts.
+     */
+    data: XOR<DisabledProductUpdateManyMutationInput, DisabledProductUncheckedUpdateManyInput>
+    /**
+     * Filter which DisabledProducts to update
+     */
+    where?: DisabledProductWhereInput
+    /**
+     * Limit how many DisabledProducts to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * DisabledProduct updateManyAndReturn
+   */
+  export type DisabledProductUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DisabledProduct
+     */
+    select?: DisabledProductSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the DisabledProduct
+     */
+    omit?: DisabledProductOmit<ExtArgs> | null
+    /**
+     * The data used to update DisabledProducts.
+     */
+    data: XOR<DisabledProductUpdateManyMutationInput, DisabledProductUncheckedUpdateManyInput>
+    /**
+     * Filter which DisabledProducts to update
+     */
+    where?: DisabledProductWhereInput
+    /**
+     * Limit how many DisabledProducts to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * DisabledProduct upsert
+   */
+  export type DisabledProductUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DisabledProduct
+     */
+    select?: DisabledProductSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DisabledProduct
+     */
+    omit?: DisabledProductOmit<ExtArgs> | null
+    /**
+     * The filter to search for the DisabledProduct to update in case it exists.
+     */
+    where: DisabledProductWhereUniqueInput
+    /**
+     * In case the DisabledProduct found by the `where` argument doesn't exist, create a new DisabledProduct with this data.
+     */
+    create: XOR<DisabledProductCreateInput, DisabledProductUncheckedCreateInput>
+    /**
+     * In case the DisabledProduct was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<DisabledProductUpdateInput, DisabledProductUncheckedUpdateInput>
+  }
+
+  /**
+   * DisabledProduct delete
+   */
+  export type DisabledProductDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DisabledProduct
+     */
+    select?: DisabledProductSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DisabledProduct
+     */
+    omit?: DisabledProductOmit<ExtArgs> | null
+    /**
+     * Filter which DisabledProduct to delete.
+     */
+    where: DisabledProductWhereUniqueInput
+  }
+
+  /**
+   * DisabledProduct deleteMany
+   */
+  export type DisabledProductDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which DisabledProducts to delete
+     */
+    where?: DisabledProductWhereInput
+    /**
+     * Limit how many DisabledProducts to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * DisabledProduct without action
+   */
+  export type DisabledProductDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DisabledProduct
+     */
+    select?: DisabledProductSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DisabledProduct
+     */
+    omit?: DisabledProductOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -4560,7 +5705,10 @@ export namespace Prisma {
     planPrice: 'planPrice',
     totalPrice: 'totalPrice',
     extraAccessoriesCount: 'extraAccessoriesCount',
+    petId: 'petId',
     status: 'status',
+    backgroundId: 'backgroundId',
+    customBackgroundUrl: 'customBackgroundUrl',
     customerName: 'customerName',
     customerEmail: 'customerEmail',
     customerPhone: 'customerPhone',
@@ -4589,6 +5737,15 @@ export namespace Prisma {
   };
 
   export type LegoFigureScalarFieldEnum = (typeof LegoFigureScalarFieldEnum)[keyof typeof LegoFigureScalarFieldEnum]
+
+
+  export const DisabledProductScalarFieldEnum: {
+    id: 'id',
+    type: 'type',
+    itemId: 'itemId'
+  };
+
+  export type DisabledProductScalarFieldEnum = (typeof DisabledProductScalarFieldEnum)[keyof typeof DisabledProductScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -4738,7 +5895,10 @@ export namespace Prisma {
     planPrice?: IntFilter<"LegoOrder"> | number
     totalPrice?: IntFilter<"LegoOrder"> | number
     extraAccessoriesCount?: IntFilter<"LegoOrder"> | number
+    petId?: IntNullableFilter<"LegoOrder"> | number | null
     status?: StringFilter<"LegoOrder"> | string
+    backgroundId?: IntFilter<"LegoOrder"> | number
+    customBackgroundUrl?: StringNullableFilter<"LegoOrder"> | string | null
     customerName?: StringFilter<"LegoOrder"> | string
     customerEmail?: StringFilter<"LegoOrder"> | string
     customerPhone?: StringFilter<"LegoOrder"> | string
@@ -4759,7 +5919,10 @@ export namespace Prisma {
     planPrice?: SortOrder
     totalPrice?: SortOrder
     extraAccessoriesCount?: SortOrder
+    petId?: SortOrderInput | SortOrder
     status?: SortOrder
+    backgroundId?: SortOrder
+    customBackgroundUrl?: SortOrderInput | SortOrder
     customerName?: SortOrder
     customerEmail?: SortOrder
     customerPhone?: SortOrder
@@ -4783,7 +5946,10 @@ export namespace Prisma {
     planPrice?: IntFilter<"LegoOrder"> | number
     totalPrice?: IntFilter<"LegoOrder"> | number
     extraAccessoriesCount?: IntFilter<"LegoOrder"> | number
+    petId?: IntNullableFilter<"LegoOrder"> | number | null
     status?: StringFilter<"LegoOrder"> | string
+    backgroundId?: IntFilter<"LegoOrder"> | number
+    customBackgroundUrl?: StringNullableFilter<"LegoOrder"> | string | null
     customerName?: StringFilter<"LegoOrder"> | string
     customerEmail?: StringFilter<"LegoOrder"> | string
     customerPhone?: StringFilter<"LegoOrder"> | string
@@ -4804,7 +5970,10 @@ export namespace Prisma {
     planPrice?: SortOrder
     totalPrice?: SortOrder
     extraAccessoriesCount?: SortOrder
+    petId?: SortOrderInput | SortOrder
     status?: SortOrder
+    backgroundId?: SortOrder
+    customBackgroundUrl?: SortOrderInput | SortOrder
     customerName?: SortOrder
     customerEmail?: SortOrder
     customerPhone?: SortOrder
@@ -4832,7 +6001,10 @@ export namespace Prisma {
     planPrice?: IntWithAggregatesFilter<"LegoOrder"> | number
     totalPrice?: IntWithAggregatesFilter<"LegoOrder"> | number
     extraAccessoriesCount?: IntWithAggregatesFilter<"LegoOrder"> | number
+    petId?: IntNullableWithAggregatesFilter<"LegoOrder"> | number | null
     status?: StringWithAggregatesFilter<"LegoOrder"> | string
+    backgroundId?: IntWithAggregatesFilter<"LegoOrder"> | number
+    customBackgroundUrl?: StringNullableWithAggregatesFilter<"LegoOrder"> | string | null
     customerName?: StringWithAggregatesFilter<"LegoOrder"> | string
     customerEmail?: StringWithAggregatesFilter<"LegoOrder"> | string
     customerPhone?: StringWithAggregatesFilter<"LegoOrder"> | string
@@ -4922,6 +6094,51 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"LegoFigure"> | Date | string
   }
 
+  export type DisabledProductWhereInput = {
+    AND?: DisabledProductWhereInput | DisabledProductWhereInput[]
+    OR?: DisabledProductWhereInput[]
+    NOT?: DisabledProductWhereInput | DisabledProductWhereInput[]
+    id?: IntFilter<"DisabledProduct"> | number
+    type?: StringFilter<"DisabledProduct"> | string
+    itemId?: IntFilter<"DisabledProduct"> | number
+  }
+
+  export type DisabledProductOrderByWithRelationInput = {
+    id?: SortOrder
+    type?: SortOrder
+    itemId?: SortOrder
+  }
+
+  export type DisabledProductWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    type_itemId?: DisabledProductTypeItemIdCompoundUniqueInput
+    AND?: DisabledProductWhereInput | DisabledProductWhereInput[]
+    OR?: DisabledProductWhereInput[]
+    NOT?: DisabledProductWhereInput | DisabledProductWhereInput[]
+    type?: StringFilter<"DisabledProduct"> | string
+    itemId?: IntFilter<"DisabledProduct"> | number
+  }, "id" | "type_itemId">
+
+  export type DisabledProductOrderByWithAggregationInput = {
+    id?: SortOrder
+    type?: SortOrder
+    itemId?: SortOrder
+    _count?: DisabledProductCountOrderByAggregateInput
+    _avg?: DisabledProductAvgOrderByAggregateInput
+    _max?: DisabledProductMaxOrderByAggregateInput
+    _min?: DisabledProductMinOrderByAggregateInput
+    _sum?: DisabledProductSumOrderByAggregateInput
+  }
+
+  export type DisabledProductScalarWhereWithAggregatesInput = {
+    AND?: DisabledProductScalarWhereWithAggregatesInput | DisabledProductScalarWhereWithAggregatesInput[]
+    OR?: DisabledProductScalarWhereWithAggregatesInput[]
+    NOT?: DisabledProductScalarWhereWithAggregatesInput | DisabledProductScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"DisabledProduct"> | number
+    type?: StringWithAggregatesFilter<"DisabledProduct"> | string
+    itemId?: IntWithAggregatesFilter<"DisabledProduct"> | number
+  }
+
   export type PostCreateInput = {
     name: string
     createdAt?: Date | string
@@ -4974,7 +6191,10 @@ export namespace Prisma {
     planPrice: number
     totalPrice: number
     extraAccessoriesCount?: number
+    petId?: number | null
     status?: string
+    backgroundId?: number
+    customBackgroundUrl?: string | null
     customerName: string
     customerEmail: string
     customerPhone: string
@@ -4995,7 +6215,10 @@ export namespace Prisma {
     planPrice: number
     totalPrice: number
     extraAccessoriesCount?: number
+    petId?: number | null
     status?: string
+    backgroundId?: number
+    customBackgroundUrl?: string | null
     customerName: string
     customerEmail: string
     customerPhone: string
@@ -5015,7 +6238,10 @@ export namespace Prisma {
     planPrice?: IntFieldUpdateOperationsInput | number
     totalPrice?: IntFieldUpdateOperationsInput | number
     extraAccessoriesCount?: IntFieldUpdateOperationsInput | number
+    petId?: NullableIntFieldUpdateOperationsInput | number | null
     status?: StringFieldUpdateOperationsInput | string
+    backgroundId?: IntFieldUpdateOperationsInput | number
+    customBackgroundUrl?: NullableStringFieldUpdateOperationsInput | string | null
     customerName?: StringFieldUpdateOperationsInput | string
     customerEmail?: StringFieldUpdateOperationsInput | string
     customerPhone?: StringFieldUpdateOperationsInput | string
@@ -5036,7 +6262,10 @@ export namespace Prisma {
     planPrice?: IntFieldUpdateOperationsInput | number
     totalPrice?: IntFieldUpdateOperationsInput | number
     extraAccessoriesCount?: IntFieldUpdateOperationsInput | number
+    petId?: NullableIntFieldUpdateOperationsInput | number | null
     status?: StringFieldUpdateOperationsInput | string
+    backgroundId?: IntFieldUpdateOperationsInput | number
+    customBackgroundUrl?: NullableStringFieldUpdateOperationsInput | string | null
     customerName?: StringFieldUpdateOperationsInput | string
     customerEmail?: StringFieldUpdateOperationsInput | string
     customerPhone?: StringFieldUpdateOperationsInput | string
@@ -5057,7 +6286,10 @@ export namespace Prisma {
     planPrice: number
     totalPrice: number
     extraAccessoriesCount?: number
+    petId?: number | null
     status?: string
+    backgroundId?: number
+    customBackgroundUrl?: string | null
     customerName: string
     customerEmail: string
     customerPhone: string
@@ -5076,7 +6308,10 @@ export namespace Prisma {
     planPrice?: IntFieldUpdateOperationsInput | number
     totalPrice?: IntFieldUpdateOperationsInput | number
     extraAccessoriesCount?: IntFieldUpdateOperationsInput | number
+    petId?: NullableIntFieldUpdateOperationsInput | number | null
     status?: StringFieldUpdateOperationsInput | string
+    backgroundId?: IntFieldUpdateOperationsInput | number
+    customBackgroundUrl?: NullableStringFieldUpdateOperationsInput | string | null
     customerName?: StringFieldUpdateOperationsInput | string
     customerEmail?: StringFieldUpdateOperationsInput | string
     customerPhone?: StringFieldUpdateOperationsInput | string
@@ -5096,7 +6331,10 @@ export namespace Prisma {
     planPrice?: IntFieldUpdateOperationsInput | number
     totalPrice?: IntFieldUpdateOperationsInput | number
     extraAccessoriesCount?: IntFieldUpdateOperationsInput | number
+    petId?: NullableIntFieldUpdateOperationsInput | number | null
     status?: StringFieldUpdateOperationsInput | string
+    backgroundId?: IntFieldUpdateOperationsInput | number
+    customBackgroundUrl?: NullableStringFieldUpdateOperationsInput | string | null
     customerName?: StringFieldUpdateOperationsInput | string
     customerEmail?: StringFieldUpdateOperationsInput | string
     customerPhone?: StringFieldUpdateOperationsInput | string
@@ -5187,6 +6425,45 @@ export namespace Prisma {
     legsId?: IntFieldUpdateOperationsInput | number
     accessories?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DisabledProductCreateInput = {
+    type: string
+    itemId: number
+  }
+
+  export type DisabledProductUncheckedCreateInput = {
+    id?: number
+    type: string
+    itemId: number
+  }
+
+  export type DisabledProductUpdateInput = {
+    type?: StringFieldUpdateOperationsInput | string
+    itemId?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type DisabledProductUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    type?: StringFieldUpdateOperationsInput | string
+    itemId?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type DisabledProductCreateManyInput = {
+    id?: number
+    type: string
+    itemId: number
+  }
+
+  export type DisabledProductUpdateManyMutationInput = {
+    type?: StringFieldUpdateOperationsInput | string
+    itemId?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type DisabledProductUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    type?: StringFieldUpdateOperationsInput | string
+    itemId?: IntFieldUpdateOperationsInput | number
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -5303,6 +6580,17 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type IntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
   export type StringNullableFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -5340,7 +6628,10 @@ export namespace Prisma {
     planPrice?: SortOrder
     totalPrice?: SortOrder
     extraAccessoriesCount?: SortOrder
+    petId?: SortOrder
     status?: SortOrder
+    backgroundId?: SortOrder
+    customBackgroundUrl?: SortOrder
     customerName?: SortOrder
     customerEmail?: SortOrder
     customerPhone?: SortOrder
@@ -5358,6 +6649,8 @@ export namespace Prisma {
     planPrice?: SortOrder
     totalPrice?: SortOrder
     extraAccessoriesCount?: SortOrder
+    petId?: SortOrder
+    backgroundId?: SortOrder
   }
 
   export type LegoOrderMaxOrderByAggregateInput = {
@@ -5367,7 +6660,10 @@ export namespace Prisma {
     planPrice?: SortOrder
     totalPrice?: SortOrder
     extraAccessoriesCount?: SortOrder
+    petId?: SortOrder
     status?: SortOrder
+    backgroundId?: SortOrder
+    customBackgroundUrl?: SortOrder
     customerName?: SortOrder
     customerEmail?: SortOrder
     customerPhone?: SortOrder
@@ -5387,7 +6683,10 @@ export namespace Prisma {
     planPrice?: SortOrder
     totalPrice?: SortOrder
     extraAccessoriesCount?: SortOrder
+    petId?: SortOrder
     status?: SortOrder
+    backgroundId?: SortOrder
+    customBackgroundUrl?: SortOrder
     customerName?: SortOrder
     customerEmail?: SortOrder
     customerPhone?: SortOrder
@@ -5405,6 +6704,24 @@ export namespace Prisma {
     planPrice?: SortOrder
     totalPrice?: SortOrder
     extraAccessoriesCount?: SortOrder
+    petId?: SortOrder
+    backgroundId?: SortOrder
+  }
+
+  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
   export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -5486,6 +6803,39 @@ export namespace Prisma {
     legsId?: SortOrder
   }
 
+  export type DisabledProductTypeItemIdCompoundUniqueInput = {
+    type: string
+    itemId: number
+  }
+
+  export type DisabledProductCountOrderByAggregateInput = {
+    id?: SortOrder
+    type?: SortOrder
+    itemId?: SortOrder
+  }
+
+  export type DisabledProductAvgOrderByAggregateInput = {
+    id?: SortOrder
+    itemId?: SortOrder
+  }
+
+  export type DisabledProductMaxOrderByAggregateInput = {
+    id?: SortOrder
+    type?: SortOrder
+    itemId?: SortOrder
+  }
+
+  export type DisabledProductMinOrderByAggregateInput = {
+    id?: SortOrder
+    type?: SortOrder
+    itemId?: SortOrder
+  }
+
+  export type DisabledProductSumOrderByAggregateInput = {
+    id?: SortOrder
+    itemId?: SortOrder
+  }
+
   export type StringFieldUpdateOperationsInput = {
     set?: string
   }
@@ -5514,6 +6864,14 @@ export namespace Prisma {
     connectOrCreate?: LegoFigureCreateOrConnectWithoutOrderInput | LegoFigureCreateOrConnectWithoutOrderInput[]
     createMany?: LegoFigureCreateManyOrderInputEnvelope
     connect?: LegoFigureWhereUniqueInput | LegoFigureWhereUniqueInput[]
+  }
+
+  export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
   }
 
   export type NullableStringFieldUpdateOperationsInput = {
@@ -5656,6 +7014,17 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type NestedIntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
   export type NestedStringNullableFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -5668,6 +7037,33 @@ export namespace Prisma {
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
+  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
   export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -5685,17 +7081,6 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedStringNullableFilter<$PrismaModel>
     _max?: NestedStringNullableFilter<$PrismaModel>
-  }
-
-  export type NestedIntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
   export type LegoFigureCreateWithoutOrderInput = {
@@ -5766,7 +7151,10 @@ export namespace Prisma {
     planPrice: number
     totalPrice: number
     extraAccessoriesCount?: number
+    petId?: number | null
     status?: string
+    backgroundId?: number
+    customBackgroundUrl?: string | null
     customerName: string
     customerEmail: string
     customerPhone: string
@@ -5786,7 +7174,10 @@ export namespace Prisma {
     planPrice: number
     totalPrice: number
     extraAccessoriesCount?: number
+    petId?: number | null
     status?: string
+    backgroundId?: number
+    customBackgroundUrl?: string | null
     customerName: string
     customerEmail: string
     customerPhone: string
@@ -5821,7 +7212,10 @@ export namespace Prisma {
     planPrice?: IntFieldUpdateOperationsInput | number
     totalPrice?: IntFieldUpdateOperationsInput | number
     extraAccessoriesCount?: IntFieldUpdateOperationsInput | number
+    petId?: NullableIntFieldUpdateOperationsInput | number | null
     status?: StringFieldUpdateOperationsInput | string
+    backgroundId?: IntFieldUpdateOperationsInput | number
+    customBackgroundUrl?: NullableStringFieldUpdateOperationsInput | string | null
     customerName?: StringFieldUpdateOperationsInput | string
     customerEmail?: StringFieldUpdateOperationsInput | string
     customerPhone?: StringFieldUpdateOperationsInput | string
@@ -5841,7 +7235,10 @@ export namespace Prisma {
     planPrice?: IntFieldUpdateOperationsInput | number
     totalPrice?: IntFieldUpdateOperationsInput | number
     extraAccessoriesCount?: IntFieldUpdateOperationsInput | number
+    petId?: NullableIntFieldUpdateOperationsInput | number | null
     status?: StringFieldUpdateOperationsInput | string
+    backgroundId?: IntFieldUpdateOperationsInput | number
+    customBackgroundUrl?: NullableStringFieldUpdateOperationsInput | string | null
     customerName?: StringFieldUpdateOperationsInput | string
     customerEmail?: StringFieldUpdateOperationsInput | string
     customerPhone?: StringFieldUpdateOperationsInput | string

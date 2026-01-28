@@ -5,7 +5,7 @@ export const Fondos = [
         id: 1,
         name: 'Ropa 1',
         description: 'Lego Mannequin',
-        image: getCloudinaryUrl('/Fondos/(Inglés).png'),
+        image: getCloudinaryUrl('/Fondos/1.png'),
     },
     {
         id: 2,
@@ -72,11 +72,5 @@ export const Fondos = [
         name: 'Ropa 12',
         description: 'Lego Mannequin',
         image: getCloudinaryUrl('/Fondos/12.png'),
-    },
-    {
-        id: 13,
-        name: 'Ropa 13',
-        description: 'Lego Mannequin',
-        image: getCloudinaryUrl('/Fondos/13.png'),
     },
 ]

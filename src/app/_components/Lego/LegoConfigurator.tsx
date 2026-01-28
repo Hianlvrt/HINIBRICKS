@@ -1,12 +1,15 @@
 "use client";
 import React, { useState, useMemo, useCallback } from 'react';
 // NUEVO: Importamos 'Check' y 'Lock' para el feedback visual
-import { Scissors, Smile, Shirt, ShoppingBag, Sparkles, User, Plus, Check, Lock, Mars, Venus } from 'lucide-react';
+import { Scissors, Smile, Shirt, ShoppingBag, Sparkles, User, Plus, Check, Lock, Mars, Venus, PawPrint, RotateCcw } from 'lucide-react';
 import Image from 'next/image';
 
 import { LegoMannequin } from './LegoMannequin';
 import { getFilteredItems, type LegoItem } from '~/data/Lego';
+import { pets } from '~/data/Lego/pets';
 import type { Plan } from './PlanSelector';
+
+const PET_EXTRA_COST = 1500;
 
 const CATEGORIES = [
     { id: 'hair', label: 'Pelo', icon: Scissors },
@@ -17,6 +20,7 @@ const CATEGORIES = [
 ];
 
 type FigureNumber = 1 | 2 | 3 | 4;
+type ActiveFigure = FigureNumber | 'pet';
 type FigureSexo = 'male' | 'female' | null;
 
 interface FigureSelection {
@@ -36,6 +40,10 @@ interface LegoConfiguratorProps {
         fig3: FigureSelection;
         fig4: FigureSelection;
     };
+    /** IDs de ítems Lego deshabilitados (se muestran pero no se pueden seleccionar) */
+    disabledLegoIds?: number[];
+    /** IDs de mascotas deshabilitadas */
+    disabledPetIds?: number[];
     onShowSummary: (data: {
         selections: {
             fig1: FigureSelection;
@@ -45,12 +53,15 @@ interface LegoConfiguratorProps {
         };
         totalPrice: number;
         extraAccessoriesCount: number;
+        petId: number | null;
     }) => void;
 }
 
-export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initialSelections, onShowSummary }) => {
-    const [activeFigure, setActiveFigure] = useState<FigureNumber>(1);
+export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initialSelections, disabledLegoIds = [], disabledPetIds = [], onShowSummary }) => {
+    const [activeFigure, setActiveFigure] = useState<ActiveFigure>(1);
     const [activeCategory, setActiveCategory] = useState('hair');
+    const [showPetFigure, setShowPetFigure] = useState(false);
+    const [petSelection, setPetSelection] = useState<number | null>(null);
 
     // Estado de selecciones (soporta hasta 4 figuras)
     // Si hay initialSelections, usarlas; sino, usar valores por defecto
@@ -74,14 +85,16 @@ export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initia
         return `fig${figNum}` as FigureKey;
     }, []);
 
-    // Helper para obtener el sexo de la figura activa
-    const getCurrentFigureSexo = useCallback(() => {
+    // Helper para obtener el sexo de la figura activa (null si es mascota)
+    const getCurrentFigureSexo = useCallback((): FigureSexo => {
+        if (activeFigure === 'pet') return null;
         const figKey = getFigureKey(activeFigure);
         return selections[figKey].sexo;
     }, [activeFigure, selections, getFigureKey]);
 
     // Handler para cambiar el sexo de la figura activa
     const handleSexoChange = (sexo: 'male' | 'female') => {
+        if (activeFigure === 'pet') return;
         const figKey = getFigureKey(activeFigure);
         const currentSexo = selections[figKey].sexo;
         
@@ -118,6 +131,7 @@ export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initia
 
     // Helper para saber si una categoría específica ya tiene selección
     const isCategoryCompleted = (catId: string) => {
+        if (activeFigure === 'pet') return false;
         const figKey = getFigureKey(activeFigure);
         const value = selections[figKey][catId as keyof FigureSelection];
         // Para accesorios, verificamos si el array tiene al menos un elemento
@@ -130,7 +144,8 @@ export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initia
 
     // Helper para verificar si la figura COMPLETA está lista (por número de figura)
     const isFigureComplete = useCallback((figureNum?: FigureNumber) => {
-        const figNum = figureNum ?? activeFigure;
+        const figNum = figureNum ?? (activeFigure !== 'pet' ? activeFigure : undefined);
+        if (figNum === undefined) return false;
         const figKey = getFigureKey(figNum);
         const currentSelections = selections[figKey];
         // Revisamos si TODAS las categorías tienen valor (incluyendo sexo)
@@ -153,13 +168,14 @@ export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initia
         const extraAccs = calculateExtraAccessories();
         let price = plan.price + (extraAccs * plan.accExtraCost);
         
-        // Si es plan familiar y la figura 4 está completa, agregar $3.000
         if (plan.id === 'familiar' && isFigureComplete(4)) {
             price += EXTRA_FIGURE_COST;
         }
-        
+        if (petSelection !== null) {
+            price += PET_EXTRA_COST;
+        }
         return price;
-    }, [plan.price, plan.accExtraCost, plan.id, calculateExtraAccessories, isFigureComplete]);
+    }, [plan.price, plan.accExtraCost, plan.id, calculateExtraAccessories, isFigureComplete, petSelection]);
 
     // Helpers específicos para cada figura
     const isFig1Complete = () => isFigureComplete(1);
@@ -170,13 +186,12 @@ export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initia
     // Verificar si se puede avanzar (figuras mínimas completas)
     // Plan familiar: mínimo 2 figuras (Fig. 1 y Fig. 2), las demás son opcionales
     // Plan estándar: todas las figuras deben estar completas
+    // Si se agregó mascota (showPetFigure), debe estar elegida (petSelection !== null)
     const areAllFiguresComplete = () => {
+        if (showPetFigure && petSelection === null) return false;
         if (plan.id === 'familiar') {
-            // Para plan familiar, solo necesitamos 2 figuras completas (Fig. 1 y Fig. 2)
             return isFigureComplete(1) && isFigureComplete(2);
         }
-        
-        // Para otros planes, todas las figuras deben estar completas
         for (let i = 1; i <= plan.maxFigures; i++) {
             if (!isFigureComplete(i as FigureNumber)) {
                 return false;
@@ -202,50 +217,51 @@ export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initia
         return count;
     };
 
-    // Obtener opciones filtradas por categoría y sexo
+    // Obtener opciones filtradas por categoría y sexo (o mascotas si figura activa es mascota)
     const currentOptions = useMemo(() => {
+        if (activeFigure === 'pet') return pets;
         const figureSexo = getCurrentFigureSexo();
-        if (!figureSexo) return []; // Si no hay sexo seleccionado, no mostrar opciones
+        if (!figureSexo) return [];
         return getFilteredItems(activeCategory, figureSexo);
-    }, [activeCategory, getCurrentFigureSexo]);
+    }, [activeFigure, activeCategory, getCurrentFigureSexo]);
 
-    const handleSelect = (item: LegoItem) => {
+    const handleSelect = (item: LegoItem | { id: number; name: string; image: string }) => {
+        if (activeFigure === 'pet') {
+            setPetSelection((prev) => (prev === item.id ? null : item.id));
+            return;
+        }
         const figKey = getFigureKey(activeFigure);
+        const legoItem = item as LegoItem;
         
         // Lógica especial para accesorios (múltiples selecciones)
         if (activeCategory === 'accs') {
             setSelections((prev) => {
                 const currentAccs = prev[figKey].accs;
-                const isAlreadySelected = currentAccs.includes(item.id);
+                const isAlreadySelected = currentAccs.includes(legoItem.id);
                 
                 if (isAlreadySelected) {
-                    // Si ya está seleccionado, lo removemos
                     return {
                         ...prev,
                         [figKey]: {
                             ...prev[figKey],
-                            accs: currentAccs.filter(id => id !== item.id)
+                            accs: currentAccs.filter(id => id !== legoItem.id)
                         }
                     };
                 } else {
-                    // Permitir hasta 2 accesorios por figura
-                    // (1 incluido + 1 extra con costo adicional)
                     if (currentAccs.length < 2) {
                         return {
                             ...prev,
                             [figKey]: {
                                 ...prev[figKey],
-                                accs: [...currentAccs, item.id]
+                                accs: [...currentAccs, legoItem.id]
                             }
                         };
                     }
-                    // Si ya hay 2 seleccionados, no hacemos nada
                     return prev;
                 }
             });
         } else {
-            // Para otras categorías, lógica normal (una sola selección)
-            const newValue = isSelected(item.id) ? null : item.id;
+            const newValue = isSelected(legoItem.id) ? null : legoItem.id;
             setSelections((prev) => ({
                 ...prev,
                 [figKey]: {
@@ -257,9 +273,9 @@ export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initia
     };
 
     const isSelected = (itemId: number) => {
+        if (activeFigure === 'pet') return petSelection === itemId;
         const figKey = getFigureKey(activeFigure);
         
-        // Para accesorios, verificamos si está en el array
         if (activeCategory === 'accs') {
             return selections[figKey].accs.includes(itemId);
         }
@@ -270,21 +286,36 @@ export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initia
 
     // Helper para verificar si se puede seleccionar más accesorios
     const canSelectMoreAccs = () => {
-        if (activeCategory !== 'accs') return true;
+        if (activeCategory !== 'accs' || activeFigure === 'pet') return true;
         const figKey = getFigureKey(activeFigure);
         return selections[figKey].accs.length < 2;
     };
 
     // Handler para el botón "Revisar y Confirmar"
     const handleReviewAndConfirm = () => {
-        // Solo permite continuar si TODAS las figuras están completas
         if (areAllFiguresComplete()) {
             onShowSummary({
                 selections,
                 totalPrice,
                 extraAccessoriesCount: calculateExtraAccessories(),
+                petId: petSelection,
             });
         }
+    };
+
+    const emptySelections = {
+        fig1: { sexo: null, hair: null, face: null, body: null, legs: null, accs: [] },
+        fig2: { sexo: null, hair: null, face: null, body: null, legs: null, accs: [] },
+        fig3: { sexo: null, hair: null, face: null, body: null, legs: null, accs: [] },
+        fig4: { sexo: null, hair: null, face: null, body: null, legs: null, accs: [] },
+    };
+
+    const handleClearAll = () => {
+        setSelections(emptySelections);
+        setActiveFigure(1);
+        setActiveCategory('hair');
+        setShowPetFigure(false);
+        setPetSelection(null);
     };
 
     return (
@@ -295,7 +326,7 @@ export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initia
                 <div className="relative bg-white rounded-2xl lg:rounded-3xl shadow-xl p-3 sm:p-4 lg:p-6 border border-gray-100 aspect-square lg:aspect-square flex items-center justify-center overflow-visible">
 
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-yellow-300 text-yellow-900 text-[10px] sm:text-xs font-bold px-3 sm:px-4 py-1 sm:py-1.5 rounded-full shadow-sm z-20">
-                        Editando Figura {activeFigure}
+                        {activeFigure === 'pet' ? 'Editando Mascota' : `Editando Figura ${activeFigure}`}
                     </div>
 
                     <div className="relative w-full h-full border-[6px] lg:border-10 border-slate-800 rounded-lg lg:rounded-xl bg-blue-50 flex items-center justify-center overflow-hidden">
@@ -305,10 +336,17 @@ export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initia
                     </div>
                 </div>
 
-                {/* Botón Agregar Extra - solo visible en plan Familiar */}
-                {plan.allowsExtra && (
+                {/* Botón Agregar Mascota - solo visible cuando permite extra y aún no se agregó */}
+                {plan.allowsExtra && !showPetFigure && (
                     <div className="grid grid-cols-1 gap-4">
-                        <button className="flex flex-col items-center justify-center gap-2 p-4 rounded-2xl border-2 border-dashed border-blue-200 bg-white hover:bg-blue-50 transition-colors text-blue-500">
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setShowPetFigure(true);
+                                setActiveFigure('pet');
+                            }}
+                            className="flex flex-col items-center justify-center gap-2 p-4 rounded-2xl border-2 border-dashed border-blue-200 bg-white hover:bg-blue-50 transition-colors text-blue-500"
+                        >
                             <Plus size={24} />
                             <span className="text-sm font-bold">Agregar Mascota</span>
                         </button>
@@ -329,6 +367,11 @@ export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initia
                                     +$3.000 por figura adicional (Fig. 4)
                                 </p>
                             )}
+                            {petSelection !== null && (
+                                <p className="text-xs text-green-600 font-semibold">
+                                    +${PET_EXTRA_COST.toLocaleString()} por mascota
+                                </p>
+                            )}
                             {calculateExtraAccessories() > 0 && (
                                 <p className="text-xs text-gray-500">
                                     +${(calculateExtraAccessories() * plan.accExtraCost).toLocaleString()} ({calculateExtraAccessories()} accesorio(s) extra)
@@ -342,8 +385,9 @@ export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initia
             {/* === COLUMNA DERECHA: CONTROLES === */}
             <div className="w-full lg:w-2/3 flex flex-col gap-4 lg:gap-6">
 
-                {/* Selector de Figuras (dinámico según el plan) */}
-                <div className="flex gap-2 lg:gap-3 p-1 bg-gray-100/50 rounded-xl lg:rounded-2xl w-fit mx-auto lg:mx-0 flex-wrap">
+                {/* Selector de Figuras + Limpiar todo */}
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex gap-2 lg:gap-3 p-1 bg-gray-100/50 rounded-xl lg:rounded-2xl w-fit flex-wrap">
                     {Array.from({ length: plan.maxFigures }, (_, i) => i + 1).map((figNum) => {
                         const isComplete = figNum === 1 ? isFig1Complete() : 
                                          figNum === 2 ? isFig2Complete() : 
@@ -352,7 +396,6 @@ export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initia
                         const figKey = getFigureKey(figNum as FigureNumber);
                         const figureSexo = selections[figKey].sexo;
                         
-                        // Color dinámico basado en el sexo seleccionado
                         const getActiveColor = () => {
                             if (figureSexo === 'male') return 'bg-blue-500';
                             if (figureSexo === 'female') return 'bg-pink-500';
@@ -362,14 +405,16 @@ export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initia
                         return (
                             <button
                                 key={figNum}
-                                onClick={() => setActiveFigure(figNum as FigureNumber)}
+                                onClick={() => {
+                                    setActiveFigure(figNum as FigureNumber);
+                                    setActiveCategory('hair');
+                                }}
                                 className={`relative flex items-center gap-1.5 lg:gap-2 px-3 sm:px-4 lg:px-5 py-2 lg:py-2.5 rounded-lg lg:rounded-xl transition-all font-bold text-xs sm:text-sm ${
                                     activeFigure === figNum
                                         ? `${getActiveColor()} text-white shadow-md`
                                         : 'text-gray-500 hover:text-gray-700'
                                 }`}
                             >
-                                {/* Icono según el sexo */}
                                 {figureSexo === 'male' ? (
                                     <span className="text-sm"><Mars size={18} className="lg:w-6 lg:h-6" /></span>
                                 ) : figureSexo === 'female' ? (
@@ -378,7 +423,6 @@ export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initia
                                     <User size={14} className="lg:w-4 lg:h-4" />
                                 )}
                                 Fig. {figNum}
-                                {/* Check si la figura está completa */}
                                 {isComplete && (
                                     <div className="absolute -top-1 -right-1 bg-green-500 text-white rounded-full p-0.5 shadow-sm">
                                         <Check size={10} strokeWidth={4} />
@@ -387,9 +431,38 @@ export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initia
                             </button>
                         );
                     })}
+                    {showPetFigure && (
+                        <button
+                            type="button"
+                            onClick={() => setActiveFigure('pet')}
+                            className={`relative flex items-center gap-1.5 lg:gap-2 px-3 sm:px-4 lg:px-5 py-2 lg:py-2.5 rounded-lg lg:rounded-xl transition-all font-bold text-xs sm:text-sm ${
+                                activeFigure === 'pet'
+                                    ? 'bg-amber-500 text-white shadow-md'
+                                    : 'text-gray-500 hover:text-gray-700'
+                            }`}
+                        >
+                            <PawPrint size={18} className="lg:w-6 lg:h-6" />
+                            Mascota
+                            {petSelection !== null && (
+                                <div className="absolute -top-1 -right-1 bg-green-500 text-white rounded-full p-0.5 shadow-sm">
+                                    <Check size={10} strokeWidth={4} />
+                                </div>
+                            )}
+                        </button>
+                    )}
+                </div>
+                <button
+                    type="button"
+                    onClick={handleClearAll}
+                    className="flex items-center gap-2 px-3 py-2 rounded-xl border-2 border-gray-200 text-gray-600 hover:bg-gray-100 hover:border-gray-300 hover:text-gray-800 transition-colors text-sm font-semibold"
+                >
+                    <RotateCcw size={16} />
+                    Limpiar todo
+                </button>
                 </div>
 
-                {/* Selector de Sexo */}
+                {/* Selector de Sexo - oculto cuando la figura activa es Mascota */}
+                {activeFigure !== 'pet' && (
                 <div className="bg-white rounded-xl lg:rounded-2xl p-3 lg:p-4 shadow-sm border border-gray-100">
                     <p className="text-xs sm:text-sm font-semibold text-gray-600 mb-2 lg:mb-3 text-center">
                         ¿Esta figura será Hombre o Mujer?
@@ -419,8 +492,10 @@ export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initia
                         </button>
                     </div>
                 </div>
+                )}
 
-                {/* Selector de Categorías (Iconos con Check) - Solo visible si hay sexo seleccionado */}
+                {/* Selector de Categorías - oculto cuando la figura activa es Mascota */}
+                {activeFigure !== 'pet' && (
                 <div className={`bg-white rounded-2xl lg:rounded-3xl p-1.5 lg:p-2 shadow-sm border border-gray-100 transition-opacity ${
                     !getCurrentFigureSexo() ? 'opacity-50 pointer-events-none' : ''
                 }`}>
@@ -454,16 +529,19 @@ export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initia
                         })}
                     </div>
                 </div>
+                )}
 
                 {/* GRILLA DE OPCIONES */}
                 <div className="bg-white rounded-2xl lg:rounded-[2rem] p-4 sm:p-5 lg:p-6 shadow-xl border border-gray-100 grow relative min-h-[320px] sm:min-h-[350px] lg:min-h-[400px]">
 
                     <div className="flex items-center justify-between mb-3 lg:mb-4">
                         <h3 className="text-gray-800 font-bold flex items-center gap-2 text-sm lg:text-base">
-                            Selecciona {CATEGORIES.find(c => c.id === activeCategory)?.label}
+                            {activeFigure === 'pet'
+                                ? 'Selecciona tu mascota'
+                                : `Selecciona ${CATEGORIES.find(c => c.id === activeCategory)?.label}`}
                         </h3>
-                        {/* Contador de accesorios seleccionados */}
-                        {activeCategory === 'accs' && (() => {
+                        {/* Contador de accesorios seleccionados - no en modo mascota */}
+                        {activeFigure !== 'pet' && activeCategory === 'accs' && (() => {
                             const figKey = getFigureKey(activeFigure);
                             const count = selections[figKey].accs.length;
                             const extraCount = Math.max(0, count - plan.maxAccsPerFigure);
@@ -482,7 +560,7 @@ export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initia
                         })()}
                     </div>
 
-                    {!getCurrentFigureSexo() ? (
+                    {!getCurrentFigureSexo() && activeFigure !== 'pet' ? (
                         <div className="flex flex-col items-center justify-center h-full text-gray-400 min-h-[200px]">
                             <User size={40} className="mb-3 opacity-30 lg:w-12 lg:h-12" />
                             <p className="text-base lg:text-lg font-semibold">Selecciona el sexo primero</p>
@@ -492,12 +570,16 @@ export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initia
                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-4 lg:gap-4 overflow-y-auto max-h-[300px] sm:max-h-[350px] lg:max-h-[400px] pr-1 lg:pr-2 custom-scrollbar pb-16 sm:pb-20">
                             {currentOptions.map((item) => {
                                 const selected = isSelected(item.id);
-                                const isDisabled = activeCategory === 'accs' && !selected && !canSelectMoreAccs();
-                                
+                                const disabledByInventory = activeFigure === 'pet'
+                                    ? (disabledPetIds?.includes(item.id) ?? false)
+                                    : (disabledLegoIds?.includes(item.id) ?? false);
+                                const disabledByAccsLimit = activeCategory === 'accs' && !selected && !canSelectMoreAccs();
+                                const isDisabled = disabledByInventory || disabledByAccsLimit;
+
                                 return (
                                 <button
                                     key={item.id}
-                                    onClick={() => handleSelect(item)}
+                                    onClick={() => !disabledByInventory && handleSelect(item)}
                                     disabled={isDisabled}
                                     className={`group relative aspect-square rounded-xl lg:rounded-2xl bg-gray-50 border-2 transition-all overflow-hidden ${
                                         selected
@@ -505,7 +587,7 @@ export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initia
                                             : isDisabled
                                                 ? 'border-transparent opacity-50 cursor-not-allowed'
                                                 : 'border-transparent hover:border-blue-300'
-                                        }`}
+                                    }`}
                                 >
                                     {item.image ? (
                                         <Image
@@ -521,8 +603,16 @@ export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initia
                                     <span className="absolute bottom-0 left-0 w-full text-center text-[8px] sm:text-[9px] lg:text-[10px] font-bold text-gray-500 bg-white/90 py-0.5 lg:py-1">
                                         {item.name}
                                     </span>
+                                    {/* Indicador: inventario deshabilitado */}
+                                    {disabledByInventory && (
+                                        <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded-xl lg:rounded-2xl">
+                                            <span className="text-[9px] lg:text-xs font-bold text-white bg-gray-700 px-1.5 py-0.5 lg:py-1 rounded">
+                                                No disponible
+                                            </span>
+                                        </div>
+                                    )}
                                     {/* Indicador de límite alcanzado para accesorios */}
-                                    {activeCategory === 'accs' && isDisabled && (
+                                    {!disabledByInventory && activeCategory === 'accs' && disabledByAccsLimit && (
                                         <div className="absolute inset-0 flex items-center justify-center bg-black/20 rounded-xl lg:rounded-2xl">
                                             <span className="text-[9px] lg:text-xs font-bold text-white bg-red-500 px-1.5 lg:px-2 py-0.5 lg:py-1 rounded">
                                                 Máximo alcanzado

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { sendOrderConfirmedEmails } from "~/server/email";
 
 // Schema para validar la información del cliente
 const customerInfoSchema = z.object({
@@ -45,11 +46,14 @@ export const orderRouter = createTRPCRouter({
         }),
         totalPrice: z.number(),
         extraAccessoriesCount: z.number(),
+        backgroundId: z.number(),
+        customBackgroundUrl: z.string().url().optional().nullable(),
+        petId: z.number().nullable().optional(),
         customerInfo: customerInfoSchema,
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const { plan, selections, totalPrice, extraAccessoriesCount, customerInfo } = input;
+      const { plan, selections, totalPrice, extraAccessoriesCount, backgroundId, customBackgroundUrl, petId, customerInfo } = input;
 
       // Extraer figuras configuradas
       const figures = Object.entries(selections)
@@ -88,6 +92,9 @@ export const orderRouter = createTRPCRouter({
           planPrice: plan.price,
           totalPrice,
           extraAccessoriesCount,
+          backgroundId,
+          customBackgroundUrl: customBackgroundUrl ?? null,
+          petId: petId ?? null,
           status: "pending",
           customerName: customerInfo.name,
           customerEmail: customerInfo.email,
@@ -104,6 +111,19 @@ export const orderRouter = createTRPCRouter({
         include: {
           figures: true,
         },
+      });
+
+      // Envío de correos al cliente y al admin (no bloquea la respuesta si falla)
+      void sendOrderConfirmedEmails({
+        orderId: order.id,
+        customerName: customerInfo.name,
+        customerEmail: customerInfo.email,
+        planName: plan.name,
+        totalPrice,
+      }).then((result) => {
+        if (!result.ok) {
+          console.error("[order.create] Correos no enviados:", result.error);
+        }
       });
 
       return {
