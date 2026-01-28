@@ -532,7 +532,7 @@ export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initia
                 )}
 
                 {/* GRILLA DE OPCIONES */}
-                <div className="bg-white rounded-2xl lg:rounded-[2rem] p-4 sm:p-5 lg:p-6 shadow-xl border border-gray-100 grow relative min-h-[320px] sm:min-h-[350px] lg:min-h-[400px]">
+                <div className="bg-white rounded-2xl lg:rounded-[2rem] p-4 sm:p-5 lg:p-6 shadow-xl border border-gray-100 grow relative min-h-[320px] sm:min-h-[350px] lg:min-h-[400px] flex flex-col">
 
                     <div className="flex items-center justify-between mb-3 lg:mb-4">
                         <h3 className="text-gray-800 font-bold flex items-center gap-2 text-sm lg:text-base">
@@ -567,7 +567,10 @@ export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initia
                             <p className="text-xs lg:text-sm mt-1">Elige si la figura será Hombre o Mujer</p>
                         </div>
                     ) : currentOptions.length > 0 ? (
-                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-4 lg:gap-4 overflow-y-auto max-h-[300px] sm:max-h-[350px] lg:max-h-[400px] pr-1 lg:pr-2 custom-scrollbar pb-16 sm:pb-20">
+                        <div
+                            className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-4 lg:gap-4 overflow-y-auto overflow-x-hidden max-h-[300px] sm:max-h-[350px] lg:max-h-[400px] pr-1 lg:pr-2 custom-scrollbar pb-16 sm:pb-20 min-h-0 flex-1 auto-rows-[minmax(120px,auto)]"
+                            style={{ WebkitOverflowScrolling: 'touch' } as React.CSSProperties}
+                        >
                             {currentOptions.map((item) => {
                                 const selected = isSelected(item.id);
                                 const disabledByInventory = activeFigure === 'pet'
@@ -581,7 +584,7 @@ export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initia
                                     key={item.id}
                                     onClick={() => !disabledByInventory && handleSelect(item)}
                                     disabled={isDisabled}
-                                    className={`group relative aspect-square rounded-xl lg:rounded-2xl bg-gray-50 border-2 transition-all overflow-hidden ${
+                                    className={`group relative aspect-square rounded-xl lg:rounded-2xl bg-gray-50 border-2 transition-all overflow-hidden min-w-0 w-full ${
                                         selected
                                             ? 'border-blue-500 ring-2 ring-blue-200 shadow-lg'
                                             : isDisabled
@@ -594,6 +597,7 @@ export const LegoConfigurator: React.FC<LegoConfiguratorProps> = ({ plan, initia
                                             src={item.image}
                                             alt={item.name}
                                             fill
+                                            sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
                                             className="object-contain drop-shadow-sm group-hover:scale-110 transition-transform duration-300"
                                         />
                                     ) : (
